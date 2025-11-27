@@ -3,6 +3,16 @@ export type Language = 'tr' | 'en';
 export type Theme = 'light' | 'dark';
 export type AppView = 'home' | 'create' | 'profile';
 
+export interface StoryOption {
+  text: string;
+}
+
+export interface WordOfTheDay {
+  word: string;
+  definition: string;
+  example: string;
+}
+
 export interface Story {
   id: string;
   title: string;
@@ -14,6 +24,11 @@ export interface Story {
   author?: string;
   language: Language;
   createdAt: number;
+  isInteractive?: boolean;
+  choices?: StoryOption[];
+  audioUrl?: string;
+  coloringPageUrl?: string;
+  wordOfTheDay?: WordOfTheDay;
 }
 
 export interface UserProfile {
@@ -63,6 +78,40 @@ export interface Translation {
   painting: string;
   createMagicImage: string;
   magicImageCreated: string;
+  // Hero Mode
+  heroMode: string;
+  heroModeDesc: string;
+  heroNameLabel: string;
+  heroNamePlaceholder: string;
+  heroToyLabel: string;
+  heroToyPlaceholder: string;
+  heroPlaceLabel: string;
+  heroPlacePlaceholder: string;
+  // Interactive Mode
+  interactiveMode: string;
+  interactiveModeDesc: string;
+  makeAChoice: string;
+  continuingStory: string;
+  // Voice Recording
+  recordVoice: string;
+  recording: string;
+  stopRecording: string;
+  playRecording: string;
+  deleteRecording: string;
+  listenToStory: string;
+  voiceFeatureDesc: string;
+  // Painting
+  paintMode: string;
+  createColoringPage: string;
+  preparingCanvas: string;
+  brushSize: string;
+  pickColor: string;
+  clearCanvas: string;
+  saveArtwork: string;
+  // Word of the Day
+  wordOfTheDay: string;
+  discoverWord: string;
+  findingWord: string;
 }
 
 export const CATEGORIES = {
