@@ -326,10 +326,6 @@ const AudioPlayer = ({ src, onDelete, title, autoPlay = false, themeConfig }: Au
   );
 };
 
-// ... PaintingModal remains mostly the same, just keeping it standard as it's a full screen canvas tool ...
-// Skipping PaintingModal full implementation in this diff as it was already provided and works well independently of themes. 
-// Assuming it exists as previously defined.
-
 // Re-defining PaintingModal for completeness in this file
 interface PaintingModalProps {
   imageUrl: string;
@@ -633,12 +629,12 @@ const HomeView = ({ stories, lang, onStoryClick, activeFilter, setActiveFilter, 
         <p className="text-white/90 relative z-10 font-medium text-lg">{t.welcomeDesc}</p>
       </div>
 
-      <div className="mb-8 overflow-x-auto no-scrollbar pb-2">
-        <div className="flex gap-3">
-          <button onClick={() => setActiveFilter('all')} className={`px-6 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all ${activeFilter === 'all' ? themeConfig.primary : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{t.allAges}</button>
-          {Object.values(CATEGORIES).map(cat => ( <button key={cat} onClick={() => setActiveFilter(cat)} className={`px-6 py-2.5 rounded-full whitespace-nowrap text-sm font-bold capitalize transition-all ${activeFilter === cat ? themeConfig.primary : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{t['cat_' + cat] || cat}</button> ))}
-           <div className="w-[1px] h-8 bg-gray-200 dark:bg-gray-700 mx-2 self-center"></div>
-           {Object.values(AGE_GROUPS).map(age => ( <button key={age} onClick={() => setActiveFilter(age)} className={`px-5 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all ${activeFilter === age ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30' : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{age}</button> ))}
+      <div className="mb-8 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
+        <div className="flex gap-3 w-max">
+          <button onClick={() => setActiveFilter('all')} className={`flex-shrink-0 px-6 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all ${activeFilter === 'all' ? themeConfig.primary : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{t.allAges}</button>
+          {Object.values(CATEGORIES).map(cat => ( <button key={cat} onClick={() => setActiveFilter(cat)} className={`flex-shrink-0 px-6 py-2.5 rounded-full whitespace-nowrap text-sm font-bold capitalize transition-all ${activeFilter === cat ? themeConfig.primary : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{t['cat_' + cat] || cat}</button> ))}
+           <div className="w-[1px] h-8 bg-gray-200 dark:bg-gray-700 mx-2 self-center flex-shrink-0"></div>
+           {Object.values(AGE_GROUPS).map(age => ( <button key={age} onClick={() => setActiveFilter(age)} className={`flex-shrink-0 px-5 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all ${activeFilter === age ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30' : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{age}</button> ))}
         </div>
       </div>
 
