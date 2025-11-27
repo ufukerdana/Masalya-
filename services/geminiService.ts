@@ -1,5 +1,5 @@
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Modality } from "@google/genai";
 import { Language, AGE_GROUPS, StoryOption, WordOfTheDay } from "../types";
 
 const apiKey = process.env.API_KEY;
@@ -7,8 +7,31 @@ const apiKey = process.env.API_KEY;
 // Safely initialize the client. If no key is present, we handle it in the function call.
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
+// Helpers for Audio Decoding
+function decode(base64: string) {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// Helper to encode Uint8Array to Base64
+function encodeBase64(bytes: Uint8Array) {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 const getStyleForAge = (ageGroup: string): string => {
-  if (ageGroup === AGE_GROUPS.TODDLER) {
+  if (ageGroup === AGE_GROUPS.BABY) {
+    return "very simple shapes, high contrast, baby book style, soft edges, minimal details, cute, white background, pastel accents";
+  } else if (ageGroup === AGE_GROUPS.TODDLER) {
     return "cute, soft pastel colors, simple shapes, cartoon style, storybook illustration, whimsical, very friendly";
   } else if (ageGroup === AGE_GROUPS.KID) {
     return "vibrant pastel colors, detailed children's book illustration, watercolor style, magical atmosphere";
@@ -80,12 +103,59 @@ export const generateColoringPage = async (
   }
 };
 
+export const generateStorySpeech = async (
+  text: string,
+  language: Language
+): Promise<string | null> => {
+  if (!ai) return null;
+
+  // Truncate if too long (API limits)
+  const promptText = text.substring(0, 3000); 
+
+  const voiceName = language === 'tr' ? 'Kore' : 'Puck'; 
+  
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-preview-tts",
+      contents: [{ parts: [{ text: promptText }] }],
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: voiceName },
+            },
+        },
+      },
+    });
+
+    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!base64Audio) return null;
+
+    const audioBytes = decode(base64Audio);
+    // Create WAV Header
+    const wavHeader = getWavHeader(audioBytes.length, 24000, 1);
+    
+    // Concatenate Header and PCM data
+    const wavBytes = new Uint8Array(wavHeader.byteLength + audioBytes.byteLength);
+    wavBytes.set(new Uint8Array(wavHeader), 0);
+    wavBytes.set(audioBytes, wavHeader.byteLength);
+
+    // Convert complete WAV to Base64 String for persistence
+    const wavBase64 = encodeBase64(wavBytes);
+    return `data:audio/wav;base64,${wavBase64}`;
+
+  } catch (error) {
+    console.error("Error generating speech:", error);
+    return null;
+  }
+};
+
 export const generateStoryContent = async (
   prompt: string,
   language: Language,
   ageGroup: string,
   isInteractive: boolean = false
-): Promise<{ title: string; content: string; imageUrl?: string; choices?: StoryOption[]; wordOfTheDay?: WordOfTheDay } | null> => {
+): Promise<{ title: string; content: string; imageUrl?: string; choices?: StoryOption[]; wordOfTheDay?: WordOfTheDay; aiAudioUrl?: string } | null> => {
   if (!ai) {
     console.error("API Key is missing");
     throw new Error("API Key is missing");
@@ -149,15 +219,19 @@ export const generateStoryContent = async (
       return null;
     }
 
-    // 2. Generate Image (Parallel or Sequential)
-    const imageResult = await generateStoryImage(`${prompt} - ${storyData.title}`, ageGroup);
+    // 2. Generate Image and Audio in Parallel
+    const [imageResult, audioResult] = await Promise.all([
+      generateStoryImage(`${prompt} - ${storyData.title}`, ageGroup),
+      !isInteractive ? generateStorySpeech(storyData.content, language) : Promise.resolve(null)
+    ]);
 
     return {
       title: storyData.title,
       content: storyData.content,
       choices: storyData.choices, // Undefined for non-interactive
       imageUrl: imageResult || undefined,
-      wordOfTheDay: storyData.wordOfTheDay
+      wordOfTheDay: storyData.wordOfTheDay,
+      aiAudioUrl: audioResult || undefined
     };
 
   } catch (error) {
@@ -235,7 +309,7 @@ export const generateWordCard = async (
       model: 'gemini-2.5-flash',
       contents: `Read this story and pick ONE educational, interesting word suitable for a child aged ${ageGroup}. 
       Provide a simple definition and an example sentence. Language: ${langText}.
-      Story: ${storyContent.substring(0, 1000)}...`, // Truncate to avoid huge context usage if long
+      Story: ${storyContent.substring(0, 1000)}...`, 
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -246,7 +320,7 @@ export const generateWordCard = async (
              example: { type: "STRING" }
           },
           required: ["word", "definition", "example"]
-        } as any // Cast to any to avoid type check issues with enum import
+        } as any 
       },
     });
     
@@ -257,5 +331,46 @@ export const generateWordCard = async (
   } catch (error) {
     console.error("Error generating word card:", error);
     return null;
+  }
+}
+
+// Helper to add WAV header to raw PCM data so <audio> elements can play it
+function getWavHeader(dataLength: number, sampleRate: number, numChannels: number) {
+  const buffer = new ArrayBuffer(44);
+  const view = new DataView(buffer);
+
+  // RIFF identifier
+  writeString(view, 0, 'RIFF');
+  // file length
+  view.setUint32(4, 36 + dataLength, true);
+  // RIFF type
+  writeString(view, 8, 'WAVE');
+  // format chunk identifier
+  writeString(view, 12, 'fmt ');
+  // format chunk length
+  view.setUint32(16, 16, true);
+  // sample format (raw)
+  view.setUint16(20, 1, true);
+  // channel count
+  view.setUint16(22, numChannels, true);
+  // sample rate
+  view.setUint32(24, sampleRate, true);
+  // byte rate (sample rate * block align)
+  view.setUint32(28, sampleRate * numChannels * 2, true);
+  // block align (channel count * bytes per sample)
+  view.setUint16(32, numChannels * 2, true);
+  // bits per sample
+  view.setUint16(34, 16, true);
+  // data chunk identifier
+  writeString(view, 36, 'data');
+  // data chunk length
+  view.setUint32(40, dataLength, true);
+
+  return buffer;
+}
+
+function writeString(view: DataView, offset: number, string: string) {
+  for (let i = 0; i < string.length; i++) {
+    view.setUint8(offset + i, string.charCodeAt(i));
   }
 }

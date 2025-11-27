@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Story, UserProfile, Language, Theme, AppView, CATEGORIES, AGE_GROUPS, Translation, StoryOption } from './types';
-import { TRANSLATIONS, STATIC_STORIES } from './constants';
-import { generateStoryContent, generateStoryImage, continueStory, generateColoringPage, generateWordCard } from './services/geminiService';
+import { TRANSLATIONS, STATIC_STORIES, WHITE_PLACEHOLDER } from './constants';
+import { generateStoryContent, generateStoryImage, continueStory, generateColoringPage, generateWordCard, generateStorySpeech } from './services/geminiService';
+import { initDB, saveStoryToDB, getAllStoriesFromDB, deleteStoryFromDB } from './services/storageService';
 
 // --- Icons (SVG) ---
 const HomeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
@@ -26,6 +27,7 @@ const PaletteIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" hei
 const BrushIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2.5 2.24 0 .46.62.8 1 .8a2.49 2.49 0 0 0 2.5-2.5c0-.56.45-1 1-1h2c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1h-1z"/></svg>;
 const DownloadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
 const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
+const Volume2Icon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>;
 
 // --- Components ---
 
@@ -63,7 +65,7 @@ const StoryCard = ({ story, onClick, t }: StoryCardProps) => (
     onClick={onClick}
     className="bg-white dark:bg-night-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 group border border-transparent hover:border-magic-300 dark:hover:border-magic-700 relative"
   >
-    <div className="relative h-48 overflow-hidden">
+    <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-800">
       <img src={story.imageUrl} alt={story.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
       {story.isAiGenerated && (
         <div className="absolute top-2 right-2 bg-magic-600/90 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm shadow-sm">
@@ -197,6 +199,7 @@ const PaintingModal = ({ imageUrl, onClose, t }: PaintingModalProps) => {
 
     // Draw the background image
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = imageUrl;
     img.onload = () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -303,6 +306,7 @@ interface ReaderModalProps {
   onGenerateColoringPage: (story: Story) => Promise<void>;
   onContinueStory: (story: Story, choice: string) => Promise<void>;
   onSaveRecording: (story: Story, audioBlobUrl: string | null) => void;
+  onSaveAiAudio: (story: Story, audioBlobUrl: string | null) => void;
   onDiscoverWord: (story: Story) => Promise<void>;
   isGeneratingImage: boolean;
   isGeneratingColoringPage: boolean;
@@ -310,12 +314,12 @@ interface ReaderModalProps {
   t: any 
 }
 
-const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerateImage, onGenerateColoringPage, onContinueStory, onSaveRecording, onDiscoverWord, isGeneratingImage, isGeneratingColoringPage, isFindingWord, t }: ReaderModalProps) => {
+const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerateImage, onGenerateColoringPage, onContinueStory, onSaveRecording, onSaveAiAudio, onDiscoverWord, isGeneratingImage, isGeneratingColoringPage, isFindingWord, t }: ReaderModalProps) => {
   const [isContinuing, setIsContinuing] = useState(false);
   const contentEndRef = useRef<HTMLDivElement>(null);
   const [showPaintingModal, setShowPaintingModal] = useState(false);
 
-  // Audio Recording State
+  // Audio Recording State (Parent)
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(story?.audioUrl || null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -323,13 +327,30 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
   const audioChunksRef = useRef<Blob[]>([]);
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
+  // AI Audio State
+  const [aiAudioUrl, setAiAudioUrl] = useState<string | null>(story?.aiAudioUrl || null);
+  const [isGeneratingAiAudio, setIsGeneratingAiAudio] = useState(false);
+  const [isAiPlaying, setIsAiPlaying] = useState(false);
+  const aiAudioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     // Reset state when story changes
     setAudioUrl(story?.audioUrl || null);
+    setAiAudioUrl(story?.aiAudioUrl || null);
     setIsRecording(false);
     setIsPlaying(false);
+    setIsAiPlaying(false);
     setShowPaintingModal(false);
   }, [story]);
+
+  // Sync with story updates (e.g. background loading)
+  useEffect(() => {
+    if (story) {
+        if (story.aiAudioUrl && story.aiAudioUrl !== aiAudioUrl) {
+            setAiAudioUrl(story.aiAudioUrl);
+        }
+    }
+  }, [story?.aiAudioUrl]);
 
   useEffect(() => {
     if (story?.coloringPageUrl && isGeneratingColoringPage === false) {
@@ -344,7 +365,12 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
     }
   }, [story?.content, story?.choices]);
 
+  // --- Parent Recorder Logic ---
   const handleStartRecording = async () => {
+    if (isAiPlaying) {
+        aiAudioPlayerRef.current?.pause();
+        setIsAiPlaying(false);
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -359,9 +385,13 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
 
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioUrl(url);
-        if (story) onSaveRecording(story, url);
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob); 
+        reader.onloadend = () => {
+            const base64data = reader.result as string;
+            setAudioUrl(base64data);
+            if (story) onSaveRecording(story, base64data);
+        }
         
         // Stop all tracks to release mic
         stream.getTracks().forEach(track => track.stop());
@@ -389,6 +419,10 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
   };
 
   const togglePlayback = () => {
+    if (isAiPlaying) {
+        aiAudioPlayerRef.current?.pause();
+        setIsAiPlaying(false);
+    }
     if (!audioPlayerRef.current || !audioUrl) return;
 
     if (isPlaying) {
@@ -398,6 +432,39 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
     }
     setIsPlaying(!isPlaying);
   };
+
+  // --- AI Narration Logic ---
+  const handleGenerateAiAudio = async () => {
+     if (!story) return;
+     setIsGeneratingAiAudio(true);
+     try {
+        const url = await generateStorySpeech(story.content, story.language);
+        if (url) {
+            setAiAudioUrl(url);
+            onSaveAiAudio(story, url);
+        }
+     } catch (e) {
+         console.error(e);
+     } finally {
+         setIsGeneratingAiAudio(false);
+     }
+  };
+
+  const toggleAiPlayback = () => {
+      if (isPlaying) {
+          audioPlayerRef.current?.pause();
+          setIsPlaying(false);
+      }
+      if (!aiAudioPlayerRef.current || !aiAudioUrl) return;
+
+      if (isAiPlaying) {
+          aiAudioPlayerRef.current.pause();
+      } else {
+          aiAudioPlayerRef.current.play();
+      }
+      setIsAiPlaying(!isAiPlaying);
+  };
+
 
   if (!story) return null;
 
@@ -421,7 +488,7 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
         <div className="bg-white dark:bg-night-800 w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200">
           {/* Header Image */}
-          <div className="relative h-48 sm:h-64 shrink-0 group">
+          <div className="relative h-48 sm:h-64 shrink-0 group bg-gray-100 dark:bg-gray-800">
             <img src={story.imageUrl} alt={story.title} className="w-full h-full object-cover" />
             <button 
               onClick={onClose}
@@ -461,7 +528,7 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
           </div>
           
           {/* Content */}
-          <div className="p-6 sm:p-8 overflow-y-auto no-scrollbar flex-1 pb-24">
+          <div className="p-6 sm:p-8 overflow-y-auto no-scrollbar flex-1 pb-32">
             <div className="flex justify-between items-center mb-6">
               <div className="flex flex-wrap gap-2">
                 <span className="px-3 py-1 bg-magic-100 dark:bg-magic-900/30 text-magic-700 dark:text-magic-300 rounded-full text-xs font-bold uppercase tracking-wide">
@@ -481,6 +548,44 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
               </button>
             </div>
             
+            {/* AI Narration Controls */}
+            <div className="mb-6 p-4 bg-magic-50 dark:bg-magic-900/10 rounded-xl flex items-center justify-between border border-magic-100 dark:border-magic-800">
+               <div className="flex items-center gap-3 text-magic-700 dark:text-magic-300">
+                   <div className="p-2 bg-magic-100 dark:bg-magic-800 rounded-full">
+                       <Volume2Icon />
+                   </div>
+                   <div className="text-sm font-bold">{t.aiNarration}</div>
+               </div>
+               
+               {aiAudioUrl ? (
+                   <div className="flex items-center gap-2 animate-in fade-in">
+                       <button
+                         onClick={toggleAiPlayback}
+                         className="px-4 py-1.5 bg-magic-600 text-white rounded-full text-sm font-semibold hover:bg-magic-700 flex items-center gap-2"
+                       >
+                           {isAiPlaying ? <PauseIcon /> : <PlayIcon />}
+                           {isAiPlaying ? t.pauseAi : t.playAi}
+                       </button>
+                       <audio 
+                         ref={aiAudioPlayerRef} 
+                         src={aiAudioUrl} 
+                         onEnded={() => setIsAiPlaying(false)}
+                         onPause={() => setIsAiPlaying(false)}
+                         onPlay={() => setIsAiPlaying(true)}
+                        />
+                   </div>
+               ) : (
+                   <button 
+                     onClick={handleGenerateAiAudio}
+                     disabled={isGeneratingAiAudio}
+                     className="px-4 py-1.5 bg-white dark:bg-magic-800 border border-magic-200 dark:border-magic-700 text-magic-700 dark:text-magic-200 rounded-full text-sm font-semibold hover:bg-magic-50 dark:hover:bg-magic-700 disabled:opacity-50 flex items-center gap-2"
+                   >
+                       {isGeneratingAiAudio ? <span className="animate-spin">✨</span> : <SparklesIcon />}
+                       {isGeneratingAiAudio ? t.generatingAudio : t.listenToAi}
+                   </button>
+               )}
+            </div>
+
             <div className="prose dark:prose-invert prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-loose font-sans">
                {story.content.split('\n').map((paragraph, idx) => (
                  paragraph.trim() && <p key={idx} className="mb-4">{paragraph}</p>
@@ -804,13 +909,13 @@ const CreateView = ({ onGenerate, isGenerating, t, createdStory, onStoryClick }:
 
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{t.ageGroup}</label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {Object.values(AGE_GROUPS).map((a) => (
               <button
                 key={a}
                 type="button"
                 onClick={() => setAge(a)}
-                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-all ${age === a ? 'bg-magic-600 text-white shadow-lg shadow-magic-500/30' : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400'}`}
+                className={`flex-1 min-w-[60px] py-2 rounded-xl text-sm font-semibold transition-all ${age === a ? 'bg-magic-600 text-white shadow-lg shadow-magic-500/30' : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400'}`}
               >
                 {a}
               </button>
@@ -974,8 +1079,7 @@ const App = () => {
   const [activeStory, setActiveStory] = useState<Story | null>(null);
   
   // Data State
-  const [generatedStories, setGeneratedStories] = useState<Story[]>([]);
-  const [updatedStaticStories, setUpdatedStaticStories] = useState<Record<string, Story>>({});
+  const [stories, setStories] = useState<Story[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile>({
     name: 'Küçük Okur',
     storiesRead: 12,
@@ -992,12 +1096,7 @@ const App = () => {
   const [activeFilter, setActiveFilter] = useState('all');
 
   const t = TRANSLATIONS[lang];
-  
-  // Merge static stories (with potential updates) and generated stories
-  const allStories = useMemo(() => {
-    const staticList = STATIC_STORIES.map(s => updatedStaticStories[s.id] || s);
-    return [...staticList, ...generatedStories];
-  }, [updatedStaticStories, generatedStories]);
+  const hasInitialized = useRef(false);
 
   // Initialize Theme
   useEffect(() => {
@@ -1007,6 +1106,105 @@ const App = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Init DB and Load Stories
+  useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
+    const initialize = async () => {
+       try {
+          await initDB();
+          const dbStories = await getAllStoriesFromDB();
+          const dbStoryMap = new Map(dbStories.map(s => [s.id, s]));
+
+          // Merge STATIC stories with DB versions
+          // If a static story exists in DB, prefer the DB version (it has assets)
+          // If not, use the static version
+          const mergedStories: Story[] = [];
+          
+          // 1. Handle Static Stories
+          for (const staticStory of STATIC_STORIES) {
+              if (dbStoryMap.has(staticStory.id)) {
+                  mergedStories.push(dbStoryMap.get(staticStory.id)!);
+                  dbStoryMap.delete(staticStory.id); // Remove from map so we don't double add
+              } else {
+                  mergedStories.push(staticStory);
+              }
+          }
+
+          // 2. Add remaining generated stories from DB
+          dbStoryMap.forEach(story => mergedStories.push(story));
+          
+          setStories(mergedStories);
+          
+          // Re-populate profile created stories from DB (Generated ones)
+          const myGenerated = mergedStories.filter(s => s.id.startsWith('gen_'));
+          setUserProfile(prev => ({ ...prev, createdStories: myGenerated }));
+
+          // --- Background Generation Queue ---
+          // Check for static stories that need assets and are NOT fully persisted in DB
+          for (const s of mergedStories) {
+             if (STATIC_STORIES.find(ss => ss.id === s.id)) {
+                 // Check if it has a real image (not placeholder) and audio
+                 const needsImage = s.imageUrl === WHITE_PLACEHOLDER;
+                 const needsAudio = !s.aiAudioUrl;
+
+                 if (needsImage || needsAudio) {
+                     // Generate missing assets
+                     let updated = { ...s };
+                     let changed = false;
+
+                     if (needsImage) {
+                         try {
+                            const prompt = `${s.title}. ${s.content.substring(0, 50)}`;
+                            const newImg = await generateStoryImage(prompt, s.ageGroup);
+                            if (newImg) {
+                                updated.imageUrl = newImg;
+                                changed = true;
+                            }
+                         } catch(e) { console.error("BG Image Gen Failed", e); }
+                     }
+
+                     if (needsAudio) {
+                         try {
+                             const newAudio = await generateStorySpeech(s.content, s.language);
+                             if (newAudio) {
+                                 updated.aiAudioUrl = newAudio;
+                                 changed = true;
+                             }
+                         } catch(e) { console.error("BG Audio Gen Failed", e); }
+                     }
+
+                     if (changed) {
+                         // Update State
+                         setStories(prev => prev.map(ps => ps.id === updated.id ? updated : ps));
+                         // Save to DB immediately
+                         await saveStoryToDB(updated);
+                     }
+                 }
+             }
+          }
+
+       } catch (e) {
+           console.error("Failed to init storage", e);
+           // Fallback to static
+           setStories(STATIC_STORIES);
+       }
+    };
+
+    initialize();
+  }, []);
+
+  // Update Active Story if it changes in the background list
+  useEffect(() => {
+     if (activeStory) {
+         const found = stories.find(s => s.id === activeStory.id);
+         if (found && (found.imageUrl !== activeStory.imageUrl || found.aiAudioUrl !== activeStory.aiAudioUrl || found.coloringPageUrl !== activeStory.coloringPageUrl || found.audioUrl !== activeStory.audioUrl || found.wordOfTheDay !== activeStory.wordOfTheDay)) {
+             setActiveStory(found);
+         }
+     }
+  }, [stories, activeStory]);
 
   // Handlers
   const handleGenerateStory = async (prompt: string, age: string, isInteractive: boolean) => {
@@ -1028,10 +1226,14 @@ const App = () => {
           createdAt: Date.now(),
           isInteractive: isInteractive,
           choices: result.choices,
-          wordOfTheDay: result.wordOfTheDay
+          wordOfTheDay: result.wordOfTheDay,
+          aiAudioUrl: result.aiAudioUrl
         };
         
-        setGeneratedStories(prev => [newStory, ...prev]);
+        // Save to DB
+        await saveStoryToDB(newStory);
+
+        setStories(prev => [newStory, ...prev]);
         setUserProfile(prev => ({
           ...prev,
           createdStories: [newStory, ...prev.createdStories]
@@ -1055,10 +1257,8 @@ const App = () => {
           choices: result.choices // Replace choices with new ones or empty
         };
         
-        // Update in generated stories list
-        setGeneratedStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-        
-        // Update currently active view
+        await saveStoryToDB(updatedStory);
+        setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
         setActiveStory(updatedStory);
       }
     } catch (error) {
@@ -1069,23 +1269,13 @@ const App = () => {
   const handleRegenerateImage = async (story: Story) => {
     setIsGeneratingImage(true);
     try {
-      // Use story title and a bit of content for context
       const prompt = `${story.title}. ${story.content.substring(0, 50)}`;
       const newImageUrl = await generateStoryImage(prompt, story.ageGroup);
       
       if (newImageUrl) {
         const updatedStory = { ...story, imageUrl: newImageUrl };
-        
-        if (story.id.startsWith('gen_')) {
-          // Update generated stories
-          setGeneratedStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-          setLastCreatedStory(current => current?.id === story.id ? updatedStory : current);
-        } else {
-          // Update static stories override map
-          setUpdatedStaticStories(prev => ({ ...prev, [story.id]: updatedStory }));
-        }
-        
-        // Update active story view immediately
+        await saveStoryToDB(updatedStory);
+        setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
         setActiveStory(updatedStory);
       }
     } catch (error) {
@@ -1103,12 +1293,8 @@ const App = () => {
       
       if (coloringUrl) {
          const updatedStory = { ...story, coloringPageUrl: coloringUrl };
-         
-         if (story.id.startsWith('gen_')) {
-           setGeneratedStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-         } else {
-           setUpdatedStaticStories(prev => ({ ...prev, [story.id]: updatedStory }));
-         }
+         await saveStoryToDB(updatedStory);
+         setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
          setActiveStory(updatedStory);
       }
     } catch (error) {
@@ -1124,12 +1310,8 @@ const App = () => {
       const wordCard = await generateWordCard(story.content, lang, story.ageGroup);
       if (wordCard) {
         const updatedStory = { ...story, wordOfTheDay: wordCard };
-        
-        if (story.id.startsWith('gen_')) {
-          setGeneratedStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-        } else {
-          setUpdatedStaticStories(prev => ({ ...prev, [story.id]: updatedStory }));
-        }
+        await saveStoryToDB(updatedStory);
+        setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
         setActiveStory(updatedStory);
       }
     } catch (error) {
@@ -1139,20 +1321,24 @@ const App = () => {
     }
   };
 
-  const handleSaveRecording = (story: Story, audioUrl: string | null) => {
+  const handleSaveRecording = async (story: Story, audioUrl: string | null) => {
       const updatedStory = { ...story, audioUrl: audioUrl || undefined };
+      await saveStoryToDB(updatedStory);
       
-      if (story.id.startsWith('gen_')) {
-          setGeneratedStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-          // Also update created stories in profile
-          setUserProfile(prev => ({
-              ...prev,
-              createdStories: prev.createdStories.map(s => s.id === story.id ? updatedStory : s)
-          }));
-      } else {
-          setUpdatedStaticStories(prev => ({ ...prev, [story.id]: updatedStory }));
-      }
+      setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+      // Update profile list if needed
+      setUserProfile(prev => ({
+          ...prev,
+          createdStories: prev.createdStories.map(s => s.id === story.id ? updatedStory : s)
+      }));
       setActiveStory(updatedStory);
+  };
+
+  const handleSaveAiAudio = async (story: Story, audioUrl: string | null) => {
+    const updatedStory = { ...story, aiAudioUrl: audioUrl || undefined };
+    await saveStoryToDB(updatedStory);
+    setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+    setActiveStory(updatedStory);
   };
 
   const handleToggleFavorite = () => {
@@ -1168,12 +1354,13 @@ const App = () => {
     });
   };
 
-  const handleDeleteStory = (id: string) => {
-    setGeneratedStories(prev => prev.filter(s => s.id !== id));
+  const handleDeleteStory = async (id: string) => {
+    await deleteStoryFromDB(id);
+    setStories(prev => prev.filter(s => s.id !== id));
     setUserProfile(prev => ({
       ...prev,
       createdStories: prev.createdStories.filter(s => s.id !== id),
-      favorites: prev.favorites.filter(favId => favId !== id) // Remove from favs too if deleted
+      favorites: prev.favorites.filter(favId => favId !== id)
     }));
   };
 
@@ -1214,7 +1401,7 @@ const App = () => {
       <main className="pt-20 px-4 max-w-4xl mx-auto min-h-[calc(100vh-80px)]">
         {view === 'home' && (
           <HomeView 
-            stories={allStories} 
+            stories={stories} 
             lang={lang} 
             onStoryClick={readStory}
             activeFilter={activeFilter}
@@ -1234,7 +1421,7 @@ const App = () => {
         {view === 'profile' && (
           <ProfileView 
             user={userProfile} 
-            allStories={allStories} 
+            allStories={stories} 
             onStoryClick={readStory}
             onDeleteStory={handleDeleteStory}
             t={t}
@@ -1281,6 +1468,7 @@ const App = () => {
         onGenerateColoringPage={handleGenerateColoringPage}
         onContinueStory={handleContinueStory}
         onSaveRecording={handleSaveRecording}
+        onSaveAiAudio={handleSaveAiAudio}
         onDiscoverWord={handleDiscoverWord}
         isGeneratingImage={isGeneratingImage}
         isGeneratingColoringPage={isGeneratingColoringPage}

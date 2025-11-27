@@ -26,7 +26,8 @@ export interface Story {
   createdAt: number;
   isInteractive?: boolean;
   choices?: StoryOption[];
-  audioUrl?: string;
+  audioUrl?: string; // Parent recording
+  aiAudioUrl?: string; // AI Narration
   coloringPageUrl?: string;
   wordOfTheDay?: WordOfTheDay;
 }
@@ -112,6 +113,12 @@ export interface Translation {
   wordOfTheDay: string;
   discoverWord: string;
   findingWord: string;
+  // AI Narration
+  aiNarration: string;
+  listenToAi: string;
+  generatingAudio: string;
+  playAi: string;
+  pauseAi: string;
 }
 
 export const CATEGORIES = {
@@ -123,6 +130,7 @@ export const CATEGORIES = {
 } as const;
 
 export const AGE_GROUPS = {
+  BABY: '1-3',
   TODDLER: '3-5',
   KID: '6-9',
   PRETEEN: '10+',

@@ -1,6 +1,9 @@
 
 import { Story, Translation, Language, CATEGORIES, AGE_GROUPS } from './types';
 
+// 1x1 White Pixel Placeholder
+export const WHITE_PLACEHOLDER = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=';
+
 export const TRANSLATIONS: Record<Language, Translation> = {
   tr: {
     welcome: "Masalya'ya Hoşgeldin",
@@ -68,7 +71,12 @@ export const TRANSLATIONS: Record<Language, Translation> = {
     saveArtwork: "Resmi İndir",
     wordOfTheDay: "Günün Kelimesi",
     discoverWord: "Sihirli Kelimeyi Bul",
-    findingWord: "Kelime Seçiliyor..."
+    findingWord: "Kelime Seçiliyor...",
+    aiNarration: "Masalya",
+    listenToAi: "Masalı Seslendir",
+    generatingAudio: "Ses Hazırlanıyor...",
+    playAi: "Dinle",
+    pauseAi: "Durdur"
   },
   en: {
     welcome: "Welcome to Masalya",
@@ -136,57 +144,279 @@ export const TRANSLATIONS: Record<Language, Translation> = {
     saveArtwork: "Download Art",
     wordOfTheDay: "Word of the Day",
     discoverWord: "Discover Magic Word",
-    findingWord: "Finding Word..."
+    findingWord: "Finding Word...",
+    aiNarration: "AI Narrator",
+    listenToAi: "Narrate Story",
+    generatingAudio: "Preparing Audio...",
+    playAi: "Listen",
+    pauseAi: "Pause"
   }
 };
 
+const TS = Date.now();
+
 export const STATIC_STORIES: Story[] = [
+  // --- 1-3 Yaş (Baby) ---
   {
-    id: 's1',
+    id: 'baby_1',
+    title: 'Minik Ayı Uyuyor',
+    content: "Minik ayı çok yorgun. Gökyüzünde ay dede var. Yıldızlar parlıyor. Minik ayı esniyor. Gözlerini kapatıyor. İyi geceler minik ayı. Tatlı rüyalar.",
+    category: CATEGORIES.BEDTIME,
+    ageGroup: AGE_GROUPS.BABY,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'baby_2',
+    title: 'The Sleepy Bunny',
+    content: "The little bunny is hopping. Hop, hop, hop. Now the sun is setting. It is time to sleep. The bunny lies on the soft grass. Close your eyes, bunny. Goodnight.",
+    category: CATEGORIES.BEDTIME,
+    ageGroup: AGE_GROUPS.BABY,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'en',
+    createdAt: TS
+  },
+  {
+    id: 'baby_3',
+    title: 'Kırmızı Top Nerede?',
+    content: "Ali'nin kırmızı bir topu var. Top zıp zıp zıplıyor. Masanın altına girdi. Ali baktı. İşte orada! Kırmızı topu buldu. Yaşasın!",
+    category: CATEGORIES.ADVENTURE,
+    ageGroup: AGE_GROUPS.BABY,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'baby_4',
+    title: 'Little Duck Swims',
+    content: "Quack, quack! The little yellow duck is in the water. Splash, splash. Look at the frog. Ribbit, ribbit. They are friends. They swim together.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.BABY,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'en',
+    createdAt: TS
+  },
+  {
+    id: 'baby_5',
+    title: 'Renkli Balonlar',
+    content: "Gökyüzünde balonlar var. Mavi balon, kırmızı balon, sarı balon. Balonlar uçuyor. Yukarı, daha yukarı! Güle güle balonlar.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.BABY,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+
+  // --- Folk Tales (Halk Masalları) ---
+  {
+    id: 'folk_1',
     title: 'Keloğlan ve Sihirli Tas',
     content: "Bir varmış, bir yokmuş. Evvel zaman içinde, kalbur saman içinde, uzak bir köyde Keloğlan yaşarmış. Annesiyle birlikte yaşayan Keloğlan, bir gün nehir kenarında parlayan bir tas bulmuş. Bu tas sıradan bir tas değilmiş, içine ne koyarsan bereketlenir, çoğalırmış. Keloğlan tası alıp eve götürmüş. Annesi, 'Oğlum bu ne?' diye sormuş. Keloğlan, 'Ana, bu sihirli bir tas, artık aç kalmayacağız' demiş. Ancak köyün açgözlü ağası bunu duymuş ve tası almak istemiş. Keloğlan zekasını kullanarak ağaya bir ders vermiş. Ağa tası zorla aldığında, tasın içinden yemek yerine kurbağalar çıkmış! Keloğlan, dürüstlüğün ve zekanın her zaman kazandığını bir kez daha kanıtlamış.",
     category: CATEGORIES.FOLK,
     ageGroup: AGE_GROUPS.KID,
-    imageUrl: 'https://picsum.photos/400/300?random=1',
+    imageUrl: WHITE_PLACEHOLDER,
     isAiGenerated: false,
     author: 'Anonim',
     language: 'tr',
-    createdAt: 1715000000000
+    createdAt: TS
   },
   {
-    id: 's2',
+    id: 'folk_2',
+    title: 'Nasreddin Hoca: Kazan Doğurdu',
+    content: "Nasreddin Hoca bir gün komşusundan büyük bir kazan ödünç almış. İade ederken içine küçük bir tencere koymuş. Komşusu 'Bu ne?' diye sorunca, Hoca 'Senin kazan doğurdu' demiş. Komşusu sevinmiş. Bir süre sonra Hoca kazanı yine istemiş. Ama bu sefer geri getirmemiş. Komşusu kazanı sorunca Hoca üzgün bir yüzle, 'Başın sağ olsun, senin kazan öldü' demiş. Komşusu 'Hocam kazan ölür mü?' diye bağırınca, Hoca gülmüş: 'Doğurduğuna inanıyorsun da öldüğüne neden inanmıyorsun?'",
+    category: CATEGORIES.FOLK,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Anonim',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'folk_3',
+    title: 'Stone Soup',
+    content: "Some travelers came to a village, carrying nothing more than an empty cooking pot. The villagers were unwilling to share any food. The travelers went to a stream and filled the pot with water, dropped a large stone in it, and placed it over a fire. One of the villagers became curious and asked what they were doing. The travelers answered that they were making 'stone soup', which tasted wonderful and which they would be delighted to share with the villager, although it still needed a little bit of garnish, which they were missing. The villager, who anticipated enjoying some of this soup, did not mind parting with a few carrots. Another villager walked by... and soon the pot was filled with meat and vegetables. Finally, a delicious soup was enjoyed by all.",
+    category: CATEGORIES.FOLK,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'European Folk Tale',
+    language: 'en',
+    createdAt: TS
+  },
+
+  // --- Animals (Hayvanlar) ---
+  {
+    id: 'anim_1',
     title: 'The Lion and the Mouse',
-    content: "Once when a Lion was asleep a little Mouse began running up and down upon him; this soon wakened the Lion, who placed his huge paw upon him, and opened his big jaws to swallow him. 'Pardon, O King,' cried the little Mouse: 'forgive me this time, I shall never forget it: who knows but what I may be able to do you a turn some of these days?' The Lion was so tickled at the idea of the Mouse being able to help him, that he lifted up his paw and let him go. Some time after the Lion was caught in a trap, and the hunters who desired to carry him alive to the King, tied him to a tree while they went in search of a waggon to carry him on. Just then the little Mouse happened to pass by, and seeing the sad plight in which the Lion was, went up to him and soon gnawed away the ropes that bound the King of the Beasts. 'Was I not right?' said the little Mouse.",
+    content: "Once when a Lion was asleep a little Mouse began running up and down upon him; this soon wakened the Lion, who placed his huge paw upon him, and opened his big jaws to swallow him. 'Pardon, O King,' cried the little Mouse: 'forgive me this time, I shall never forget it: who knows but what I may be able to do you a turn some of these days?' The Lion was so tickled at the idea of the Mouse being able to help him, that he lifted up his paw and let him go. Some time after the Lion was caught in a trap. Just then the little Mouse happened to pass by, and seeing the sad plight in which the Lion was, went up to him and soon gnawed away the ropes that bound the King of the Beasts. 'Was I not right?' said the little Mouse.",
     category: CATEGORIES.ANIMALS,
     ageGroup: AGE_GROUPS.TODDLER,
-    imageUrl: 'https://picsum.photos/400/300?random=2',
+    imageUrl: WHITE_PLACEHOLDER,
     isAiGenerated: false,
     author: 'Aesop',
     language: 'en',
-    createdAt: 1715000000000
+    createdAt: TS
   },
   {
-    id: 's3',
-    title: 'Kırmızı Başlıklı Kız',
-    content: "Bir zamanlar, ormanın kenarındaki küçük bir köyde, herkesin çok sevdiği tatlı bir kız yaşarmış. Büyükannesi ona kırmızı kadifeden bir başlık dikmişti ve o günden sonra herkes ona 'Kırmızı Başlıklı Kız' demeye başlamış. Bir gün annesi, 'Kırmızı Başlıklı Kız, al bu keki ve şarabı büyükannene götür' demiş. Ormanda yürürken kurnaz bir kurtla karşılaşmış. Kurt, kızı kandırıp yolu uzatmış ve büyükannenin evine ondan önce varmış. Ancak ormancı durumu fark edip kurdu yakalamış ve hem büyükneyi hem de Kırmızı Başlıklı Kızı kurtarmış. O günden sonra Kırmızı Başlıklı Kız, annesinin sözünden hiç çıkmamış.",
-    category: CATEGORIES.ADVENTURE,
-    ageGroup: AGE_GROUPS.KID,
-    imageUrl: 'https://picsum.photos/400/300?random=3',
+    id: 'anim_2',
+    title: 'Bremen Mızıkacıları',
+    content: "Bir zamanlar sahipleri tarafından yaşlandıkları için istenmeyen bir eşek, bir köpek, bir kedi ve bir horoz yola koyulmuşlar. Hedefleri Bremen'e gidip orada müzisyen olmakmış. Yolda giderken gece olmuş ve bir haydut evi görmüşler. Üst üste çıkarak (eşek altta, köpek onun üstünde, kedi köpeğin, horoz da en tepede) pencereden içeri bakmışlar ve hep bir ağızdan bağırmaya başlamışlar. Haydutlar bu korkunç sesi duyunca canavarların saldırdığını sanıp kaçmışlar. Dört arkadaş o eve yerleşmiş ve mutlu mesut yaşamışlar.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.TODDLER,
+    imageUrl: WHITE_PLACEHOLDER,
     isAiGenerated: false,
     author: 'Grimm Kardeşler',
     language: 'tr',
-    createdAt: 1715000000000
+    createdAt: TS
   },
   {
-    id: 's4',
+    id: 'anim_3',
     title: 'The Ugly Duckling',
-    content: "It was so beautiful out in the country. It was summer-time. The wheat was yellow, the oats were green, the hay was stacked up in the grassy meadows, and the stork paraded about on his long red legs. In a sunny spot stood a pleasant old farm-house close by a deep river. In this snug retreat sat a duck on her nest, watching for her young brood to hatch. Finally, the eggs cracked and out came ducklings. But one egg was larger than the rest. When it hatched, the duckling was grey and ugly. Everyone teased him. He ran away and spent a lonely winter. But when spring came, he saw beautiful swans in the lake. He flew to them, expecting them to peck him, but instead, they bowed to him. He looked at his reflection in the water and saw that he was no longer an ugly duckling, but a beautiful swan!",
+    content: "It was summer-time. A duck sat on her nest. Finally, the eggs cracked and out came ducklings. But one egg was larger than the rest. When it hatched, the duckling was grey and ugly. Everyone teased him. He ran away and spent a lonely winter. But when spring came, he saw beautiful swans in the lake. He flew to them, expecting them to peck him, but instead, they bowed to him. He looked at his reflection in the water and saw that he was no longer an ugly duckling, but a beautiful swan!",
     category: CATEGORIES.ANIMALS,
     ageGroup: AGE_GROUPS.KID,
-    imageUrl: 'https://picsum.photos/400/300?random=4',
+    imageUrl: WHITE_PLACEHOLDER,
     isAiGenerated: false,
-    author: 'Hans Christian Andersen',
+    author: 'H.C. Andersen',
     language: 'en',
-    createdAt: 1715000000000
+    createdAt: TS
+  },
+  {
+    id: 'anim_4',
+    title: 'Tavşan ile Kaplumbağa',
+    content: "Bir gün tavşan, kaplumbağa ile dalga geçmiş: 'Sen ne kadar yavaşsın, ben ise rüzgar gibiyim!' Kaplumbağa sakince cevap vermiş: 'İstersen yarışalım.' Tavşan gülerek kabul etmiş. Yarış başlamış, tavşan hızla fırlamış, kaplumbağa ise yavaş yavaş yürümüş. Tavşan, 'Nasılsa yetişemez, şurada biraz uyuyayım' demiş. Ancak uyuyakalmış. Uyandığında bir de bakmış ki kaplumbağa bitiş çizgisini çoktan geçmiş. Yavaş ve kararlı olan kazanır.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.TODDLER,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Ezop',
+    language: 'tr',
+    createdAt: TS
+  },
+
+  // --- Adventure (Macera) ---
+  {
+    id: 'adv_1',
+    title: 'Kırmızı Başlıklı Kız',
+    content: "Bir zamanlar, ormanın kenarındaki küçük bir köyde, herkesin çok sevdiği tatlı bir kız yaşarmış. Büyükannesi ona kırmızı kadifeden bir başlık dikmişti ve o günden sonra herkes ona 'Kırmızı Başlıklı Kız' demeye başlamış. Bir gün annesi, 'Kırmızı Başlıklı Kız, al bu keki ve şarabı büyükannene götür' demiş. Ormanda yürürken kurnaz bir kurtla karşılaşmış. Kurt, kızı kandırıp yolu uzatmış. Ancak ormancı durumu fark edip kurdu yakalamış ve hem büyükneyi hem de Kırmızı Başlıklı Kızı kurtarmış.",
+    category: CATEGORIES.ADVENTURE,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Grimm Kardeşler',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'adv_2',
+    title: 'Jack and the Beanstalk',
+    content: "Jack was a poor boy who traded his cow for magic beans. His mother was angry and threw them out the window. Overnight, a giant beanstalk grew into the sky! Jack climbed it and found a giant's castle in the clouds. He found a goose that laid golden eggs. The giant shouted 'Fee-Fi-Fo-Fum!' but Jack managed to escape with the goose and chopped down the beanstalk. The giant could not come down, and Jack and his mother lived happily ever after.",
+    category: CATEGORIES.ADVENTURE,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'English Folk Tale',
+    language: 'en',
+    createdAt: TS
+  },
+  {
+    id: 'adv_3',
+    title: 'Sinbad the Sailor',
+    content: "Sinbad was a brave sailor from Baghdad. He went on seven amazing voyages across the seas. He encountered giant birds called Rocs, explored mysterious islands that turned out to be giant whales, and found valleys full of diamonds. Despite the dangers and storms, Sinbad always used his wit and courage to survive and returned home to share his incredible stories.",
+    category: CATEGORIES.ADVENTURE,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: '1001 Nights',
+    language: 'en',
+    createdAt: TS
+  },
+
+  // --- Fantasy (Fantastik) ---
+  {
+    id: 'fant_1',
+    title: 'Pamuk Prenses',
+    content: "Bir kış günü, kraliçe pencerenin kenarında dikiş dikerken parmağına iğne batmış. Karda damlayan kanı görünce, 'Keşke teni kar gibi beyaz, dudakları kan gibi kırmızı, saçları abanoz gibi siyah bir kızım olsa' demiş. Zamanla Pamuk Prenses doğmuş. Ancak kötü kalpli üvey annesi onu kıskanmış. Pamuk Prenses ormana kaçmış ve yedi cücelerle yaşamaya başlamış. Cadı kılığındaki kraliçe ona zehirli bir elma vermiş. Neyse ki bir prens gelip onu öpmüş ve Pamuk Prenses uyanmış.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Grimm Kardeşler',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fant_2',
+    title: 'Cinderella',
+    content: "Cinderella lived with her cruel stepmother and stepsisters. She did all the cleaning. One day, the King held a ball. Cinderella couldn't go, but her Fairy Godmother appeared. She turned a pumpkin into a carriage and mice into horses. 'You must be back by midnight,' she warned. At the ball, the Prince fell in love with Cinderella. As the clock struck twelve, she ran, leaving behind a glass slipper. The Prince found her, and they lived happily ever after.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Charles Perrault',
+    language: 'en',
+    createdAt: TS
+  },
+  {
+    id: 'fant_3',
+    title: 'Alaaddin’in Sihirli Lambası',
+    content: "Alaaddin, fakir bir gençmiş. Bir gün bir büyücü onu kandırıp bir mağaraya göndermiş. Orada eski bir lamba bulmuş. Lambayı temizlerken içinden dev bir cin çıkmış! Cin, 'Dile benden ne dilersen' demiş. Alaaddin zenginlik, saray ve prensesle evlenmeyi dilemiş. Büyücü lambayı geri almaya çalışsa da Alaaddin zekasıyla onu yenmiş ve mutlu bir hayat sürmüş.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: '1001 Gece Masalları',
+    language: 'tr',
+    createdAt: TS
+  },
+
+  // --- Bedtime (Uyku Vakti) ---
+  {
+    id: 'bed_1',
+    title: 'Goodnight Moon',
+    content: "In the great green room, there was a telephone and a red balloon and a picture of... the cow jumping over the moon. Goodnight room. Goodnight moon. Goodnight cow jumping over the moon. Goodnight light and the red balloon. Goodnight bears. Goodnight chairs. Goodnight kittens and goodnight mittens. Goodnight clocks and goodnight socks. Goodnight stars, goodnight air. Goodnight noises everywhere.",
+    category: CATEGORIES.BEDTIME,
+    ageGroup: AGE_GROUPS.TODDLER,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'M.W. Brown (Style)',
+    language: 'en',
+    createdAt: TS
+  },
+  {
+    id: 'bed_2',
+    title: 'Ay Dede',
+    content: "Gece oldu, güneş uyudu. Gökyüzüne Ay Dede geldi. Gülümsedi bütün çocuklara. 'Hadi bakalım yataklara,' dedi yumuşak sesiyle. Yıldızlar pırıl pırıl parladı, ninniler söyledi. Rüzgar ağaçları hafifçe salladı. Uyku perisi gelip gözlerine sihirli tozunu serpti. Tatlı rüyalar, güzel uykular.",
+    category: CATEGORIES.BEDTIME,
+    ageGroup: AGE_GROUPS.TODDLER,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'bed_3',
+    title: 'Twinkle Twinkle Little Star',
+    content: "Twinkle, twinkle, little star, How I wonder what you are! Up above the world so high, Like a diamond in the sky. When the blazing sun is gone, When he nothing shines upon, Then you show your little light, Twinkle, twinkle, all the night. Then the traveler in the dark, Thanks you for your tiny spark.",
+    category: CATEGORIES.BEDTIME,
+    ageGroup: AGE_GROUPS.TODDLER,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Jane Taylor',
+    language: 'en',
+    createdAt: TS
   }
 ];
