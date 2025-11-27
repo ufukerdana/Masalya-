@@ -76,7 +76,13 @@ export const TRANSLATIONS: Record<Language, Translation> = {
     listenToAi: "Masalı Seslendir",
     generatingAudio: "Ses Hazırlanıyor...",
     playAi: "Dinle",
-    pauseAi: "Durdur"
+    pauseAi: "Durdur",
+    selectTheme: "Temanı Seç",
+    theme_magic: "Sihirli Dünya",
+    theme_jungle: "Orman Macerası",
+    theme_ocean: "Mavi Okyanus",
+    theme_candy: "Şeker Rüyası",
+    theme_space: "Uzay Yolcusu"
   },
   en: {
     welcome: "Welcome to Masalya",
@@ -149,13 +155,20 @@ export const TRANSLATIONS: Record<Language, Translation> = {
     listenToAi: "Narrate Story",
     generatingAudio: "Preparing Audio...",
     playAi: "Listen",
-    pauseAi: "Pause"
+    pauseAi: "Pause",
+    selectTheme: "Select Theme",
+    theme_magic: "Magic World",
+    theme_jungle: "Jungle Adventure",
+    theme_ocean: "Blue Ocean",
+    theme_candy: "Candy Dream",
+    theme_space: "Space Traveler"
   }
 };
 
 const TS = Date.now();
 
 export const STATIC_STORIES: Story[] = [
+  // ... (Keeping all existing stories, omitting for brevity in this specific block, assuming they are preserved in the final file)
   // --- 1-3 Yaş (Baby) ---
   {
     id: 'baby_1',
@@ -217,9 +230,7 @@ export const STATIC_STORIES: Story[] = [
     language: 'tr',
     createdAt: TS
   },
-
-  // --- Folk Tales (Halk Masalları) ---
-  {
+   {
     id: 'folk_1',
     title: 'Keloğlan ve Sihirli Tas',
     content: "Bir varmış, bir yokmuş. Evvel zaman içinde, kalbur saman içinde, develer tellal iken, pireler berber iken, ben anamın beşiğini tıngır mıngır sallar iken... Uzak diyarların birinde, küçük, şirin bir köyde Keloğlan yaşarmış. Keloğlan'ın saçı hiç yokmuş ama aklı zehir gibiymiş, kalbi de pamuk gibi yumuşacıkmış. Yaşlı anacığıyla birlikte fakir bir kulübede yaşarlarmış. Günlerden bir gün, evde yiyecek bir lokma ekmek kalmamış. Annesi üzgün üzgün, 'Ah Keloğlan, keleş oğlan! Kiler boşaldı, ne yiyip ne içeceğiz?' diye dövünmüş. Keloğlan anacığını teselli etmiş, 'Tasalanma anam, Allah büyüktür,' demiş ve balık tutmak için nehrin yolunu tutmuş.\n\nNehir kenarına vardığında oltasını suya atmış ve beklemeye başlamış. Beklemiş, beklemiş ama balıklar bir türlü gelmiyormuş. Tam ümidini kesecekken, oltasına ağır bir şey takılmış. Keloğlan, 'Heyt be! Kocaman bir balık yakaladım galiba!' diye sevinerek oltayı çekmiş. Ama o da ne? Oltanın ucunda balık yerine paslı, eski, bakır bir tas varmış. Keloğlan hayal kırıklığına uğramış ama yine de tası alıp temizlemeye başlamış. Tası nehir suyuyla ovdukça tas parlamaya, üzerindeki işlemeler ortaya çıkmaya başlamış. Meğer bu tas, sıradan bir tas değilmiş! Keloğlan tası yıkarken içinden şırıl şırıl sesler gelmiş ve tasın içi birdenbire mis kokulu pilavla doluvermiş!\n\nKeloğlan gözlerine inanamamış. 'Anam! Bu sihirli bir tas!' diye bağırmış. Hemen koşa koşa eve gitmiş. Annesiyle birlikte karnını bir güzel doyurmuşlar. Tas, ne dilerlerse onu veriyormuş; çorba, helva, börek... Keloğlan ve annesinin keyfine diyecek yokmuş. Ama köyün açgözlü ve zalim Ağası bu durumu duymuş. Ağa, her şeyin kendisine ait olmasını istermiş. Hemen adamlarını gönderip Keloğlan'ı ve sihirli tası zorla sarayına getirtmiş.\n\nAğa, Keloğlan'a gürlemiş: 'Bu tas artık benimdir! Sen git kendine başka bir tas bul!' Keloğlan ne kadar yalvardıysa da Ağa dinlememiş. Keloğlan üzgün bir şekilde oradan ayrılmış ama aklında bir plan varmış. Ertesi gün, köy meydanında, 'Duyduk duymadık demeyin! Sihirli tasım bozuldu, tamiri sadece bende!' diye bağırmaya başlamış. Ağa bunu duyunca telaşlanmış, çünkü tas ona yemek vermeyi kesmiş (aslında tas sadece iyi kalpli insanlara çalışırmış). Ağa, Keloğlan'ı çağırtmış. 'Çabuk bu tası tamir et!' demiş.\n\nKeloğlan tası eline almış, ona fısıldamış. Sonra Ağa'ya dönüp, 'Ağam, tasın çalışması için sizin en değerli hazinenizi fakirlere dağıtmanız gerek, yoksa tas küser' demiş. Ağa yemek hırsından kabul etmiş. Hazinesini dağıtınca tas çalışmış ama içinden yemek yerine kurbağalar fırlamış! Her yer 'vırak vırak' kurbağa olmuş. Ağa korkudan ne yapacağını şaşırmış. Keloğlan gülerek tası almış, 'Bu tas zalimlere yaramaz Ağam,' demiş ve evine dönmüş. O günden sonra Keloğlan, tasıyla tüm fakir köylülere yardım etmiş ve mutlu mesut yaşamışlar.",
@@ -255,8 +266,6 @@ export const STATIC_STORIES: Story[] = [
     language: 'en',
     createdAt: TS
   },
-
-  // --- Animals (Hayvanlar) ---
   {
     id: 'anim_1',
     title: 'The Lion and the Mouse',
@@ -305,8 +314,6 @@ export const STATIC_STORIES: Story[] = [
     language: 'tr',
     createdAt: TS
   },
-
-  // --- Adventure (Macera) ---
   {
     id: 'adv_1',
     title: 'Kırmızı Başlıklı Kız',
@@ -343,8 +350,6 @@ export const STATIC_STORIES: Story[] = [
     language: 'en',
     createdAt: TS
   },
-
-  // --- Fantasy (Fantastik) ---
   {
     id: 'fant_1',
     title: 'Pamuk Prenses',
@@ -381,8 +386,6 @@ export const STATIC_STORIES: Story[] = [
     language: 'tr',
     createdAt: TS
   },
-
-  // --- Bedtime (Uyku Vakti) ---
   {
     id: 'bed_1',
     title: 'Goodnight Moon',

@@ -1,7 +1,8 @@
 
 export type Language = 'tr' | 'en';
-export type Theme = 'light' | 'dark';
 export type AppView = 'home' | 'create' | 'profile';
+export type ThemeId = 'magic' | 'jungle' | 'ocean' | 'candy' | 'space';
+export type Theme = 'light' | 'dark';
 
 export interface StoryOption {
   text: string;
@@ -34,6 +35,7 @@ export interface Story {
 
 export interface UserProfile {
   name: string;
+  theme: ThemeId; // New field
   storiesRead: number;
   favorites: string[]; // Story IDs
   createdStories: Story[];
@@ -119,6 +121,13 @@ export interface Translation {
   generatingAudio: string;
   playAi: string;
   pauseAi: string;
+  // Themes
+  selectTheme: string;
+  theme_magic: string;
+  theme_jungle: string;
+  theme_ocean: string;
+  theme_candy: string;
+  theme_space: string;
 }
 
 export const CATEGORIES = {
