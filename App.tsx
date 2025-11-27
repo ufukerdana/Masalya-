@@ -621,6 +621,15 @@ const HomeView = ({ stories, lang, onStoryClick, activeFilter, setActiveFilter, 
     });
   }, [stories, lang, activeFilter]);
 
+  const CATEGORY_ICONS: Record<string, string> = {
+    all: '✨',
+    [CATEGORIES.ADVENTURE]: '🗺️',
+    [CATEGORIES.FANTASY]: '🧚',
+    [CATEGORIES.ANIMALS]: '🦁',
+    [CATEGORIES.BEDTIME]: '🌙',
+    [CATEGORIES.FOLK]: '📜'
+  };
+
   return (
     <div className="pb-28">
       <div className={`mb-8 p-8 bg-gradient-to-r ${themeConfig.gradient} rounded-[2rem] text-white shadow-xl shadow-${themeConfig.primary.split('-')[1]}-500/20 relative overflow-hidden`}>
@@ -630,13 +639,45 @@ const HomeView = ({ stories, lang, onStoryClick, activeFilter, setActiveFilter, 
         <p className="text-white/90 relative z-10 font-medium text-lg">{t.welcomeDesc}</p>
       </div>
 
-      <div className="mb-8 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4">
-        <div className="flex gap-3 w-max">
-          <button onClick={() => setActiveFilter('all')} className={`flex-shrink-0 px-6 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all ${activeFilter === 'all' ? themeConfig.primary : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{t.allAges}</button>
-          {Object.values(CATEGORIES).map(cat => ( <button key={cat} onClick={() => setActiveFilter(cat)} className={`flex-shrink-0 px-6 py-2.5 rounded-full whitespace-nowrap text-sm font-bold capitalize transition-all ${activeFilter === cat ? themeConfig.primary : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{t['cat_' + cat] || cat}</button> ))}
-           <div className="w-[1px] h-8 bg-gray-200 dark:bg-gray-700 mx-2 self-center flex-shrink-0"></div>
-           {Object.values(AGE_GROUPS).map(age => ( <button key={age} onClick={() => setActiveFilter(age)} className={`flex-shrink-0 px-5 py-2.5 rounded-full whitespace-nowrap text-sm font-bold transition-all ${activeFilter === age ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30' : `bg-white dark:bg-gray-800 ${themeConfig.textSub} hover:bg-gray-50 border-2 border-transparent`}`}>{age}</button> ))}
+      <div className="mb-6">
+        <h3 className={`font-bold text-lg mb-4 px-2 ${themeConfig.textMain}`}>{t.categories}</h3>
+        <div className="flex gap-4 overflow-x-auto -mx-4 px-4 pb-4 snap-x no-scrollbar">
+          <button 
+            onClick={() => setActiveFilter('all')} 
+            className={`flex flex-col items-center gap-2 min-w-[80px] cursor-pointer group snap-start`}
+          >
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-md transition-all duration-300 group-hover:scale-105 border-2 ${activeFilter === 'all' ? `bg-gradient-to-br ${themeConfig.gradient} text-white border-transparent shadow-lg scale-105` : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-transparent'}`}>
+              {CATEGORY_ICONS['all']}
+            </div>
+            <span className={`text-xs font-bold transition-colors ${activeFilter === 'all' ? themeConfig.textSub : 'text-gray-400'}`}>{t.allAges}</span>
+          </button>
+
+          {Object.values(CATEGORIES).map(cat => (
+             <button 
+              key={cat} 
+              onClick={() => setActiveFilter(cat)} 
+              className={`flex flex-col items-center gap-2 min-w-[80px] cursor-pointer group snap-start`}
+            >
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-md transition-all duration-300 group-hover:scale-105 border-2 ${activeFilter === cat ? `bg-gradient-to-br ${themeConfig.gradient} text-white border-transparent shadow-lg scale-105` : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-transparent'}`}>
+                {CATEGORY_ICONS[cat] || '📚'}
+              </div>
+              <span className={`text-xs font-bold transition-colors capitalize ${activeFilter === cat ? themeConfig.textSub : 'text-gray-400'}`}>{t['cat_' + cat] || cat}</span>
+            </button>
+          ))}
         </div>
+      </div>
+
+      <div className="mb-8 flex items-center gap-3 overflow-x-auto -mx-4 px-4 no-scrollbar">
+         <span className={`text-xs font-black uppercase tracking-widest ${themeConfig.textSub} opacity-50 shrink-0`}>{t.ageGroup}:</span>
+         {Object.values(AGE_GROUPS).map(age => ( 
+           <button 
+            key={age} 
+            onClick={() => setActiveFilter(age)} 
+            className={`flex-shrink-0 px-4 py-1.5 rounded-full whitespace-nowrap text-xs font-bold transition-all border-2 ${activeFilter === age ? 'bg-teal-500 text-white border-teal-500 shadow-md' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-100 dark:border-gray-800 hover:border-teal-200'}`}
+           >
+             {age}
+           </button> 
+         ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
