@@ -115,6 +115,9 @@ const DownloadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" he
 const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
 const Volume2Icon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>;
 const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>;
+const AlignLeftIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>;
+const AlignJustifyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>;
+
 
 // --- Helper Functions ---
 const formatTime = (time: number) => {
@@ -333,14 +336,12 @@ interface PaintingModalProps {
   t: any;
 }
 const PaintingModal = ({ imageUrl, onClose, t }: PaintingModalProps) => {
-    // ... Same implementation as previous step ...
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [color, setColor] = useState('#FF0000');
     const [brushSize, setBrushSize] = useState(5);
     const [isDrawing, setIsDrawing] = useState(false);
     const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#000000', '#FFFFFF', '#8B4513', '#FF69B4', '#00CED1'];
   
-    // ... drawing logic ...
     const startDrawing = (e: any) => {
          const canvas = canvasRef.current;
          if(!canvas) return;
@@ -653,7 +654,7 @@ const HomeView = ({ stories, lang, onStoryClick, activeFilter, setActiveFilter, 
 };
 
 interface CreateViewProps { 
-  onGenerate: (prompt: string, age: string, isInteractive: boolean) => Promise<void>; 
+  onGenerate: (prompt: string, age: string, isInteractive: boolean, length: 'short' | 'long') => Promise<void>; 
   isGenerating: boolean; 
   t: any;
   createdStory: Story | null;
@@ -665,6 +666,7 @@ const CreateView = ({ onGenerate, isGenerating, t, createdStory, onStoryClick, t
   const [prompt, setPrompt] = useState('');
   const [age, setAge] = useState<string>(AGE_GROUPS.KID);
   const [isInteractive, setIsInteractive] = useState(false);
+  const [storyLength, setStoryLength] = useState<'short' | 'long'>('short');
   const [isHeroMode, setIsHeroMode] = useState(false);
   const [heroName, setHeroName] = useState('');
   const [heroToy, setHeroToy] = useState('');
@@ -675,7 +677,7 @@ const CreateView = ({ onGenerate, isGenerating, t, createdStory, onStoryClick, t
     const finalPrompt = isHeroMode 
       ? `A story where the main character is a child named ${heroName}. Favorite item: ${heroToy || 'magical toy'}. Location: ${heroPlace || 'magical land'}.`
       : prompt;
-    if (finalPrompt.trim()) onGenerate(finalPrompt, age, isInteractive);
+    if (finalPrompt.trim()) onGenerate(finalPrompt, age, isInteractive, storyLength);
   };
 
   return (
@@ -700,6 +702,20 @@ const CreateView = ({ onGenerate, isGenerating, t, createdStory, onStoryClick, t
              {isInteractive && <div className="ml-auto text-emerald-500"><CheckIcon /></div>}
            </button>
         </div>
+        
+        {!isInteractive && (
+          <div className="mb-8">
+            <label className={`block text-sm font-bold ${themeConfig.textSub} mb-3 uppercase tracking-wide`}>{t.storyLength}</label>
+            <div className="flex gap-2">
+               <button type="button" onClick={() => setStoryLength('short')} className={`flex-1 p-3 rounded-2xl text-sm font-bold transition-all border-2 flex items-center justify-center gap-2 ${storyLength === 'short' ? `${themeConfig.primary} border-transparent` : `bg-gray-50 dark:bg-gray-800 text-gray-500 border-transparent hover:border-gray-200`}`}>
+                  <AlignLeftIcon /> {t.shortStory}
+               </button>
+               <button type="button" onClick={() => setStoryLength('long')} className={`flex-1 p-3 rounded-2xl text-sm font-bold transition-all border-2 flex items-center justify-center gap-2 ${storyLength === 'long' ? `${themeConfig.primary} border-transparent` : `bg-gray-50 dark:bg-gray-800 text-gray-500 border-transparent hover:border-gray-200`}`}>
+                  <AlignJustifyIcon /> {t.longStory}
+               </button>
+            </div>
+          </div>
+        )}
 
         <div className="mb-8">
           <label className={`block text-sm font-bold ${themeConfig.textSub} mb-3 uppercase tracking-wide`}>{t.ageGroup}</label>
@@ -829,6 +845,7 @@ const App = () => {
   const [isFindingWord, setIsFindingWord] = useState(false);
   const [lastCreatedStory, setLastCreatedStory] = useState<Story | null>(null);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [interactiveStepCount, setInteractiveStepCount] = useState(0);
 
   const t = TRANSLATIONS[lang];
   const hasInitialized = useRef(false);
@@ -917,10 +934,10 @@ const App = () => {
       localStorage.setItem('masalya_theme', newTheme);
   };
 
-  const handleGenerateStory = async (prompt: string, age: string, isInteractive: boolean) => {
+  const handleGenerateStory = async (prompt: string, age: string, isInteractive: boolean, length: 'short' | 'long') => {
     setIsGenerating(true); setLastCreatedStory(null);
     try {
-      const result = await generateStoryContent(prompt, lang, age, isInteractive);
+      const result = await generateStoryContent(prompt, lang, age, isInteractive, length);
       if (result) {
         const newStory: Story = {
           id: `gen_${Date.now()}`,
@@ -935,9 +952,11 @@ const App = () => {
     } catch (error) { alert("Error generating story."); } finally { setIsGenerating(false); }
   };
   const handleContinueStory = async (story: Story, choice: string) => {
+    const nextStep = interactiveStepCount + 1;
     try {
-      const result = await continueStory(story.content, choice, lang, story.ageGroup);
+      const result = await continueStory(story.content, choice, lang, story.ageGroup, nextStep);
       if (result) {
+        setInteractiveStepCount(nextStep);
         const updatedStory = { ...story, content: story.content + "\n\n" + result.content, choices: result.choices };
         await saveStoryToDB(updatedStory);
         setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
@@ -1007,6 +1026,7 @@ const App = () => {
     setUserProfile(prev => ({ ...prev, createdStories: prev.createdStories.filter(s => s.id !== id), favorites: prev.favorites.filter(favId => favId !== id) }));
   };
   const readStory = (story: Story) => {
+    setInteractiveStepCount(0); // Reset for new session
     setActiveStory(story);
     setUserProfile(prev => ({ ...prev, storiesRead: prev.storiesRead + 1 }));
   };
@@ -1031,6 +1051,21 @@ const App = () => {
         {view === 'create' && <CreateView onGenerate={handleGenerateStory} isGenerating={isGenerating} t={t} createdStory={lastCreatedStory} onStoryClick={readStory} themeConfig={themeConfig} />}
         {view === 'profile' && <ProfileView user={userProfile} allStories={stories} onStoryClick={readStory} onDeleteStory={handleDeleteStory} onUpdateTheme={handleUpdateTheme} t={t} themeConfig={themeConfig} />}
       </main>
+
+      {/* Full Screen Loading Overlay */}
+      {isGenerating && (
+        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-200 touch-none">
+            <div className={`bg-white dark:bg-gray-900 p-8 rounded-[2rem] shadow-2xl flex flex-col items-center text-center border-4 ${themeConfig.border} transform scale-110`}>
+                <div className="relative mb-6">
+                    <div className={`w-24 h-24 rounded-full border-4 border-gray-100 dark:border-gray-800`}></div>
+                    <div className={`absolute top-0 left-0 w-24 h-24 rounded-full border-4 border-t-transparent animate-spin ${themeConfig.textSub.replace('text-', 'border-').split(' ')[0]}`}></div>
+                    <div className="absolute inset-0 flex items-center justify-center text-4xl animate-bounce">✨</div>
+                </div>
+                <h3 className={`text-2xl font-black ${themeConfig.textMain} mb-2 animate-pulse`}>{t.generating}</h3>
+                <p className={`text-sm font-bold ${themeConfig.textSub} opacity-70`}>Sihir yapılıyor...</p>
+            </div>
+        </div>
+      )}
 
       <nav className={`fixed bottom-0 left-0 right-0 z-40 ${themeConfig.navBg} border-t pb-safe`}>
         <div className="max-w-md mx-auto flex justify-around p-3">

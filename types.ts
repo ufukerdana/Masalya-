@@ -128,6 +128,10 @@ export interface Translation {
   theme_ocean: string;
   theme_candy: string;
   theme_space: string;
+  // Story Length
+  storyLength: string;
+  shortStory: string;
+  longStory: string;
 }
 
 export const CATEGORIES = {

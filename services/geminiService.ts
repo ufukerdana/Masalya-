@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Modality } from "@google/genai";
 import { Language, AGE_GROUPS, StoryOption, WordOfTheDay } from "../types";
 
@@ -154,7 +153,8 @@ export const generateStoryContent = async (
   prompt: string,
   language: Language,
   ageGroup: string,
-  isInteractive: boolean = false
+  isInteractive: boolean = false,
+  length: 'short' | 'long' = 'short'
 ): Promise<{ title: string; content: string; imageUrl?: string; choices?: StoryOption[]; wordOfTheDay?: WordOfTheDay; aiAudioUrl?: string } | null> => {
   if (!ai) {
     console.error("API Key is missing");
@@ -183,8 +183,13 @@ export const generateStoryContent = async (
       "wordOfTheDay": { "word": "Word", "definition": "Simple definition", "example": "Example sentence using the word." }
     }`;
   } else {
+    // Handling story length instruction
+    const lengthInstruction = length === 'short' 
+      ? 'The story should be SHORT, strictly UNDER 500 words (aim for 300-400 words).'
+      : 'The story should be LONG, detailed, and immersive, strictly OVER 500 words (aim for 600-800 words).';
+
     systemInstruction += `
-    The length should be approximately a 3-minute read (around 400-600 words).
+    ${lengthInstruction}
     Also, identify one "Word of the Day" (an interesting or slightly challenging word from the story) and explain it.
     
     Return the response STRICTLY as a JSON object with this schema:
@@ -244,19 +249,35 @@ export const continueStory = async (
   currentContent: string,
   choice: string,
   language: Language,
-  ageGroup: string
+  ageGroup: string,
+  turnCount: number
 ): Promise<{ content: string; choices?: StoryOption[] } | null> => {
   if (!ai) return null;
 
+  const MAX_TURNS = 5;
+  const isFinalTurn = turnCount >= MAX_TURNS;
   const langText = language === 'tr' ? 'Turkish' : 'English';
 
-  const systemInstruction = `You are a world-class children's storyteller continuing an interactive story.
+  let systemInstruction = `You are a world-class children's storyteller continuing an interactive story.
   Target audience age: ${ageGroup}. Language: ${langText}.
-  
   The user has made a choice. Write the next segment of the story (approx 150-200 words).
-  If the story should continue, provide 2 new choices.
-  If the story should reach a conclusion, provide an empty choices array.
   
+  Current Turn: ${turnCount} / ${MAX_TURNS}.`;
+
+  if (isFinalTurn) {
+    systemInstruction += `
+    THIS IS THE FINAL TURN. 
+    Bring the story to a satisfying, magical, and happy conclusion based on the user's choice.
+    Do NOT provide any new choices.
+    The "choices" array MUST be empty.
+    `;
+  } else {
+    systemInstruction += `
+    The story continues. Provide exactly 2 new choices for what happens next.
+    `;
+  }
+  
+  systemInstruction += `
   Return STRICTLY JSON:
   {
     "content": "The next part of the story...",
@@ -273,7 +294,7 @@ export const continueStory = async (
     USER CHOSE:
     ${choice}
     
-    Write the continuation.
+    Write the ${isFinalTurn ? 'FINAL conclusion' : 'next segment'}.
     `;
 
     const response = await ai.models.generateContent({
