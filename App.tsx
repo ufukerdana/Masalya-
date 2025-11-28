@@ -1093,8 +1093,13 @@ const App = () => {
   const [view, setView] = useState<AppView>('home');
   const [activeFilter, setActiveFilter] = useState<string>('all');
   
-  // New State for Dark Mode
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Initialize dark mode based on system preference
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
   
   // Mock user for now, normally would load
   const [user, setUser] = useState<UserProfile>({
@@ -1184,7 +1189,15 @@ const App = () => {
     init();
   }, []);
   
-  // New Effect for Dark Mode
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // Update DOM when dark mode changes
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
