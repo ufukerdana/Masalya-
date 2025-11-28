@@ -116,6 +116,9 @@ const Volume2Icon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" hei
 const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>;
 const AlignLeftIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>;
 const AlignJustifyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>;
+const EraserIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>;
+const UndoIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>;
+const RedoIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>;
 
 
 // --- Helper Functions ---
@@ -333,18 +336,83 @@ const AudioPlayer = ({ src, onDelete, title, autoPlay = false, themeConfig }: Au
   );
 };
 
-// Re-defining PaintingModal for completeness in this file
 interface PaintingModalProps {
   imageUrl: string;
   onClose: () => void;
   t: any;
 }
+
 const PaintingModal = ({ imageUrl, onClose, t }: PaintingModalProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [color, setColor] = useState('#FF0000');
     const [brushSize, setBrushSize] = useState(5);
     const [isDrawing, setIsDrawing] = useState(false);
-    const colors = ['#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', '#000000', '#FFFFFF', '#8B4513', '#FF69B4', '#00CED1'];
+    const [tool, setTool] = useState<'brush' | 'eraser'>('brush');
+    
+    // History management for Undo/Redo
+    const [history, setHistory] = useState<ImageData[]>([]);
+    const [historyStep, setHistoryStep] = useState(-1);
+
+    const colors = [
+        '#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', '#4B0082', '#9400D3', 
+        '#FF69B4', '#00CED1', '#8B4513', '#A0522D', '#CD853F', '#F4A460', 
+        '#000000', '#555555', '#AAAAAA', '#FFFFFF'
+    ];
+
+    // Initialize canvas history once on mount
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if(canvas) {
+             const ctx = canvas.getContext('2d');
+             if(ctx) {
+                 // Save initial blank state
+                 const initialState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                 setHistory([initialState]);
+                 setHistoryStep(0);
+             }
+        }
+    }, []);
+
+    const saveToHistory = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        
+        const newState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const newHistory = history.slice(0, historyStep + 1);
+        newHistory.push(newState);
+        
+        // Limit history to 20 steps to save memory
+        if (newHistory.length > 20) newHistory.shift();
+        
+        setHistory(newHistory);
+        setHistoryStep(newHistory.length - 1);
+    };
+
+    const undo = () => {
+        if (historyStep > 0) {
+            const newStep = historyStep - 1;
+            setHistoryStep(newStep);
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext('2d');
+            if (canvas && ctx) {
+                ctx.putImageData(history[newStep], 0, 0);
+            }
+        }
+    };
+
+    const redo = () => {
+        if (historyStep < history.length - 1) {
+            const newStep = historyStep + 1;
+            setHistoryStep(newStep);
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext('2d');
+            if (canvas && ctx) {
+                ctx.putImageData(history[newStep], 0, 0);
+            }
+        }
+    };
   
     const startDrawing = (e: any) => {
          const canvas = canvasRef.current;
@@ -352,34 +420,79 @@ const PaintingModal = ({ imageUrl, onClose, t }: PaintingModalProps) => {
          const ctx = canvas.getContext('2d');
          if(!ctx) return;
          setIsDrawing(true);
+         
          const rect = canvas.getBoundingClientRect();
          let clientX, clientY;
-         if ('touches' in e) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } else { clientX = e.clientX; clientY = e.clientY; }
+         if ('touches' in e) { 
+             clientX = e.touches[0].clientX; 
+             clientY = e.touches[0].clientY; 
+         } else { 
+             clientX = e.clientX; 
+             clientY = e.clientY; 
+         }
+         
          const scaleX = canvas.width / rect.width;
          const scaleY = canvas.height / rect.height;
+         
          ctx.beginPath();
          ctx.moveTo((clientX - rect.left) * scaleX, (clientY - rect.top) * scaleY);
-         ctx.strokeStyle = color;
+         
+         if (tool === 'eraser') {
+             ctx.globalCompositeOperation = 'destination-out';
+             ctx.strokeStyle = 'rgba(0,0,0,1)';
+         } else {
+             ctx.globalCompositeOperation = 'source-over';
+             ctx.strokeStyle = color;
+         }
+         
          ctx.lineWidth = brushSize;
          ctx.lineCap = 'round';
          ctx.lineJoin = 'round';
     };
+
     const draw = (e: any) => {
         if(!isDrawing) return;
+        // Prevent scrolling on touch devices while drawing
+        if(e.type === 'touchmove') e.preventDefault();
+
         const canvas = canvasRef.current;
         if(!canvas) return;
         const ctx = canvas.getContext('2d');
         if(!ctx) return;
+        
         const rect = canvas.getBoundingClientRect();
         let clientX, clientY;
-        if ('touches' in e) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } else { clientX = e.clientX; clientY = e.clientY; }
+        if ('touches' in e) { 
+            clientX = e.touches[0].clientX; 
+            clientY = e.touches[0].clientY; 
+        } else { 
+            clientX = e.clientX; 
+            clientY = e.clientY; 
+        }
+        
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
+        
         ctx.lineTo((clientX - rect.left) * scaleX, (clientY - rect.top) * scaleY);
         ctx.stroke();
     };
-    const stopDrawing = () => setIsDrawing(false);
-    const clearCanvas = () => { const c = canvasRef.current; c?.getContext('2d')?.clearRect(0,0,c.width,c.height); };
+
+    const stopDrawing = () => {
+        if (isDrawing) {
+            setIsDrawing(false);
+            saveToHistory();
+        }
+    };
+
+    const clearCanvas = () => { 
+        const c = canvasRef.current; 
+        if(!c) return;
+        const ctx = c.getContext('2d');
+        if(!ctx) return;
+        ctx.clearRect(0,0,c.width,c.height);
+        saveToHistory();
+    };
+
     const saveArtwork = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -392,8 +505,14 @@ const PaintingModal = ({ imageUrl, onClose, t }: PaintingModalProps) => {
         img.crossOrigin = "anonymous";
         img.src = imageUrl;
         img.onload = () => {
+            // Draw white background
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            // Draw the coloring page image
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            // Draw the coloring (canvas content)
             ctx.drawImage(canvas, 0, 0);
+            
             const link = document.createElement('a');
             link.download = `masalya-art-${Date.now()}.png`;
             link.href = tempCanvas.toDataURL();
@@ -402,27 +521,106 @@ const PaintingModal = ({ imageUrl, onClose, t }: PaintingModalProps) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-gray-900 w-full max-w-4xl h-[90vh] rounded-3xl shadow-2xl flex flex-col relative overflow-hidden">
-                <div className="p-4 bg-gray-100 dark:bg-gray-800 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="font-bold text-lg flex items-center gap-2"><PaletteIcon /> {t.paintMode}</h3>
-                    <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full"><XIcon /></button>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-gray-900 w-full max-w-5xl h-[95vh] rounded-[2rem] shadow-2xl flex flex-col relative overflow-hidden border-4 border-white/10">
+                {/* Header */}
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 z-10 shrink-0">
+                    <h3 className="font-bold text-lg flex items-center gap-2 dark:text-white"><PaletteIcon /> {t.paintMode}</h3>
+                    <div className="flex gap-2">
+                         <button 
+                            onClick={undo} 
+                            disabled={historyStep <= 0}
+                            className={`p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors`}
+                            title="Undo"
+                         >
+                            <UndoIcon />
+                         </button>
+                         <button 
+                            onClick={redo} 
+                            disabled={historyStep >= history.length - 1}
+                            className={`p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors`}
+                            title="Redo"
+                         >
+                            <RedoIcon />
+                         </button>
+                         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2 self-center"></div>
+                         <button onClick={onClose} className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-full transition-colors"><XIcon /></button>
+                    </div>
                 </div>
-                <div className="flex-1 relative bg-gray-50 dark:bg-black overflow-hidden flex items-center justify-center">
-                    <div className="relative w-full h-full max-w-[800px] max-h-[600px] aspect-[4/3] bg-white shadow-lg m-4">
+
+                {/* Canvas Area */}
+                <div className="flex-1 relative bg-gray-100 dark:bg-black overflow-hidden flex items-center justify-center select-none touch-none">
+                     {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'radial-gradient(circle, #808080 1px, transparent 1px)', backgroundSize: '20px 20px'}}></div>
+                    
+                    <div className="relative w-full h-full max-w-[800px] max-h-[600px] aspect-[4/3] bg-white shadow-2xl m-2 sm:m-4 rounded-lg overflow-hidden ring-1 ring-black/10">
                         <img src={imageUrl} className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none" alt="" />
                         <canvas ref={canvasRef} width={800} height={600} className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
                             onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing}
                             onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing} />
                     </div>
                 </div>
-                <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 flex flex-col sm:flex-row gap-4 items-center justify-between">
-                    <div className="flex gap-2 overflow-x-auto w-full sm:w-auto p-1 no-scrollbar">
-                        {colors.map(c => <button key={c} onClick={() => setColor(c)} className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 flex-shrink-0 ${color === c ? 'border-gray-400 scale-110' : 'border-transparent'}`} style={{ backgroundColor: c }} />)}
+
+                {/* Toolbar */}
+                <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex flex-col gap-4 z-10 shrink-0 shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
+                    
+                    {/* Color Palette */}
+                    <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-2">
+                        {colors.map(c => (
+                            <button 
+                                key={c} 
+                                onClick={() => { setColor(c); setTool('brush'); }} 
+                                className={`w-10 h-10 rounded-full border-4 shadow-sm transition-all flex-shrink-0 relative group ${color === c && tool === 'brush' ? 'border-gray-300 dark:border-gray-500 scale-110 shadow-md ring-2 ring-offset-2 ring-blue-500' : 'border-transparent hover:scale-105'}`} 
+                                style={{ backgroundColor: c }}
+                                aria-label={`Select color ${c}`}
+                            >
+                                {c === '#FFFFFF' && <div className="absolute inset-0 border border-gray-200 rounded-full opacity-50 pointer-events-none"></div>}
+                            </button>
+                        ))}
                     </div>
-                    <div className="flex gap-4 items-center w-full sm:w-auto justify-between sm:justify-end">
-                        <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2"><BrushIcon /><input type="range" min="1" max="20" value={brushSize} onChange={(e) => setBrushSize(parseInt(e.target.value))} className="w-24" /></div>
-                        <div className="flex gap-2"><Button variant="ghost" onClick={clearCanvas}><TrashIcon /></Button><Button variant="primary" onClick={saveArtwork}><DownloadIcon /></Button></div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-gray-100 dark:border-gray-800 pt-4">
+                        {/* Tools & Size */}
+                        <div className="flex items-center gap-6 w-full sm:w-auto justify-center sm:justify-start">
+                             <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
+                                <button 
+                                    onClick={() => setTool('brush')}
+                                    className={`p-3 rounded-lg flex items-center justify-center transition-all ${tool === 'brush' ? 'bg-white dark:bg-gray-700 shadow-md text-blue-600' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                    title="Brush"
+                                >
+                                    <BrushIcon />
+                                </button>
+                                <button 
+                                    onClick={() => setTool('eraser')}
+                                    className={`p-3 rounded-lg flex items-center justify-center transition-all ${tool === 'eraser' ? 'bg-white dark:bg-gray-700 shadow-md text-blue-600' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                    title="Eraser"
+                                >
+                                    <EraserIcon />
+                                </button>
+                             </div>
+
+                             <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-xl">
+                                <div className="w-4 h-4 rounded-full bg-current text-gray-400"></div>
+                                <input 
+                                    type="range" 
+                                    min="1" 
+                                    max="50" 
+                                    value={brushSize} 
+                                    onChange={(e) => setBrushSize(parseInt(e.target.value))} 
+                                    className="w-24 sm:w-32 h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-blue-600" 
+                                />
+                                <div 
+                                    className="rounded-full bg-black dark:bg-white transition-all duration-200"
+                                    style={{ width: brushSize, height: brushSize, maxWidth: '24px', maxHeight: '24px' }}
+                                ></div>
+                             </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-3 w-full sm:w-auto justify-center sm:justify-end">
+                            <Button variant="ghost" onClick={clearCanvas} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"><TrashIcon /> {t.clearCanvas}</Button>
+                            <Button variant="primary" onClick={saveArtwork} className="min-w-[140px]"><DownloadIcon /> {t.saveArtwork}</Button>
+                        </div>
                     </div>
                 </div>
             </div>
