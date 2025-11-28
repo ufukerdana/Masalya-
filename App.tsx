@@ -648,7 +648,7 @@ interface ReaderModalProps {
 
 const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerateImage, onGenerateColoringPage, onContinueStory, onSaveRecording, onSaveAiAudio, onDiscoverWord, isGeneratingImage, isGeneratingColoringPage, isFindingWord, t, themeConfig }: ReaderModalProps) => {
   const [isContinuing, setIsContinuing] = useState(false);
-  const contentEndRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [showPaintingModal, setShowPaintingModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(story?.audioUrl || null);
@@ -669,8 +669,10 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
   }, [story?.aiAudioUrl]);
 
   useEffect(() => {
-    if (contentEndRef.current) contentEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [story?.content, story?.choices]);
+    if (scrollRef.current) {
+        scrollRef.current.scrollTop = 0;
+    }
+  }, [story?.id]);
 
   const handleStartRecording = async () => {
     try {
@@ -724,7 +726,7 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
             </div>
           </div>
           
-          <div className={`p-6 sm:p-8 overflow-y-auto no-scrollbar flex-1 pb-32 ${themeConfig.cardBg}`}>
+          <div ref={scrollRef} className={`p-6 sm:p-8 overflow-y-auto no-scrollbar flex-1 pb-32 ${themeConfig.cardBg}`}>
             <div className="flex justify-between items-center mb-8">
               <div className="flex flex-wrap gap-2">
                 <span className={`px-4 py-1.5 ${themeConfig.secondary} rounded-full text-xs font-bold uppercase tracking-wide border-2 border-transparent`}>{t['cat_' + story.category] || story.category}</span>
@@ -800,7 +802,6 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
                   </div>
                </div>
             )}
-            <div ref={contentEndRef} />
             <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800 text-center text-sm font-bold opacity-40 uppercase tracking-widest">{story.isInteractive && story.choices && story.choices.length > 0 ? '' : t.endOfStory} • Masalya</div>
           </div>
 
@@ -1180,7 +1181,7 @@ const App = () => {
         setUser(u => ({...u, createdStories: userGeneratedStories }));
 
         // Start background generation for missing coloring pages
-        runBackgroundGeneration(allStories);
+        // runBackgroundGeneration(allStories); // Disable to save API Quota
         
       } catch (e) {
         console.error("DB Init error", e);
