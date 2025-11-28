@@ -519,7 +519,7 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
             <button onClick={onClose} className="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-md transition-colors z-[60] focus:outline-none"><XIcon /></button>
             <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2">
                <Button variant="secondary" onClick={(e) => { e.stopPropagation(); }} disabled={true} className="hidden !text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm opacity-50 cursor-not-allowed">{t.createMagicImage}</Button>
-               <Button variant="secondary" onClick={(e) => { e.stopPropagation(); if (story.coloringPageUrl) setShowPaintingModal(true); else { onGenerateColoringPage(story).then(() => setShowPaintingModal(true)); } }} disabled={isGeneratingColoringPage} className="hidden !text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm">{isGeneratingColoringPage ? t.preparingCanvas : <><PaletteIcon /> {t.createColoringPage}</>}</Button>
+               <Button variant="secondary" onClick={(e) => { e.stopPropagation(); }} className="hidden !text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm"><PaletteIcon /> {t.createColoringPage}</Button>
             </div>
             <div className={`absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t ${story.isAiGenerated ? 'from-black/80' : 'from-black/60'} to-transparent pt-32`}>
                <h2 className="text-3xl font-black text-white leading-tight drop-shadow-md">{story.title}</h2>
@@ -554,7 +554,17 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
 
             <div className="mb-8">
               <button
-                onClick={() => { if (story.coloringPageUrl) setShowPaintingModal(true); else { onGenerateColoringPage(story).then(() => setShowPaintingModal(true)); } }}
+                onClick={() => { 
+                   if (story.coloringPageUrl) {
+                      setShowPaintingModal(true);
+                   } else {
+                      // If it's not ready yet, it implies generation is in progress (due to auto-start on open) or failed.
+                      // We can try to generate one more time explicitly if clicked, or just show a message.
+                      // But for "direct open" UX, we simply trigger the modal only if URL exists, otherwise we wait for the auto-gen.
+                      // However, let's keep the manual trigger just in case the auto-gen failed or user is too fast.
+                      onGenerateColoringPage(story).then(() => setShowPaintingModal(true));
+                   }
+                }}
                 disabled={isGeneratingColoringPage}
                 className={`w-full py-3 rounded-2xl border-2 ${themeConfig.border} bg-white dark:bg-gray-800 flex items-center justify-center gap-2 font-bold ${themeConfig.textSub} shadow-sm hover:shadow-md transition-all active:scale-95 hover:bg-gray-50 dark:hover:bg-gray-700`}
               >
@@ -912,9 +922,30 @@ const App = () => {
     const init = async () => {
       try {
         await initDB();
-        const customStories = await getAllStoriesFromDB();
-        setStories([...STATIC_STORIES, ...customStories]);
-        setUser(u => ({...u, createdStories: customStories }));
+        const dbStories = await getAllStoriesFromDB();
+        
+        // Smart Merging: 
+        // 1. Create a map of DB stories for fast lookup
+        const dbStoryMap = new Map(dbStories.map(s => [s.id, s]));
+        
+        // 2. Merge Static Stories with potential updates from DB (like coloring pages on static stories)
+        const mergedStaticStories = STATIC_STORIES.map(s => {
+             // If DB has a version of this static story (e.g. with coloringPageUrl added), use DB version
+             // We assume DB version is always "newer" or "enhanced" for static IDs
+             return dbStoryMap.has(s.id) ? dbStoryMap.get(s.id)! : s;
+        });
+
+        // 3. Separate purely new user stories (those not in static list)
+        const staticIds = new Set(STATIC_STORIES.map(s => s.id));
+        const userGeneratedStories = dbStories.filter(s => !staticIds.has(s.id));
+
+        // 4. Combine: User Generated (descending by date) + Merged Static
+        // Note: createdStories in UserProfile usually tracks just the generated ones
+        const allStories = [...userGeneratedStories.sort((a,b) => b.createdAt - a.createdAt), ...mergedStaticStories];
+        
+        setStories(allStories);
+        setUser(u => ({...u, createdStories: userGeneratedStories }));
+        
       } catch (e) {
         console.error("DB Init error", e);
       }
@@ -930,6 +961,29 @@ const App = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  // Handle auto-generation of coloring page when story is opened
+  const handleGenerateColoringPage = async (story: Story) => {
+      setIsGeneratingColoringPage(true);
+      const url = await generateColoringPage(story.title);
+      if (url) {
+          const updatedStory = { ...story, coloringPageUrl: url };
+           setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+           if (activeStory?.id === story.id) setActiveStory(updatedStory);
+           // Save to DB to persist this for static stories too
+           await saveStoryToDB(updatedStory);
+      }
+      setIsGeneratingColoringPage(false);
+  };
+
+  // Auto-generate coloring page on view if missing
+  useEffect(() => {
+     // Check if active story needs coloring page and we are not currently generating one
+     // We check activeStory.id to avoid running on every render, but we need to ensure we don't spam
+     if (activeStory && !activeStory.coloringPageUrl && !isGeneratingColoringPage) {
+         handleGenerateColoringPage(activeStory);
+     }
+  }, [activeStory?.id]);
 
   const handleStoryClick = (story: Story) => {
     setActiveStory(story);
@@ -1003,23 +1057,12 @@ const App = () => {
           // Update in list
           setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
           if (activeStory?.id === story.id) setActiveStory(updatedStory);
-          // Save if it's a DB story
-          if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+          // Save if it's a DB story or to persist change
+          await saveStoryToDB(updatedStory);
       }
       setIsGeneratingImage(false);
   };
   
-  const handleGenerateColoringPage = async (story: Story) => {
-      setIsGeneratingColoringPage(true);
-      const url = await generateColoringPage(story.title);
-      if (url) {
-          const updatedStory = { ...story, coloringPageUrl: url };
-           setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-           if (activeStory?.id === story.id) setActiveStory(updatedStory);
-           if (story.isAiGenerated) await saveStoryToDB(updatedStory);
-      }
-      setIsGeneratingColoringPage(false);
-  };
 
   const handleContinueStory = async (story: Story, choice: string) => {
       // Logic for continuing interactive story
@@ -1030,7 +1073,7 @@ const App = () => {
            const updatedStory = { ...story, content: newContent, choices: result.choices };
            setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
            if (activeStory?.id === story.id) setActiveStory(updatedStory);
-           if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+           await saveStoryToDB(updatedStory);
        }
   };
 
@@ -1038,14 +1081,14 @@ const App = () => {
       const updatedStory = { ...story, audioUrl: blobUrl || undefined };
       setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
       if (activeStory?.id === story.id) setActiveStory(updatedStory);
-      if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+      await saveStoryToDB(updatedStory);
   };
   
   const handleSaveAiAudio = async (story: Story, url: string | null) => {
       const updatedStory = { ...story, aiAudioUrl: url || undefined };
       setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
       if (activeStory?.id === story.id) setActiveStory(updatedStory);
-      if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+      await saveStoryToDB(updatedStory);
   };
   
   const handleDiscoverWord = async (story: Story) => {
@@ -1055,7 +1098,7 @@ const App = () => {
             const updatedStory = { ...story, wordOfTheDay: wordCard };
             setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
             if (activeStory?.id === story.id) setActiveStory(updatedStory);
-            if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+            await saveStoryToDB(updatedStory);
        }
        setIsFindingWord(false);
   };
