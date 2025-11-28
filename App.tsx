@@ -519,7 +519,7 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
             <button onClick={onClose} className="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-md transition-colors z-[60] focus:outline-none"><XIcon /></button>
             <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2">
                <Button variant="secondary" onClick={(e) => { e.stopPropagation(); }} disabled={true} className="hidden !text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm opacity-50 cursor-not-allowed">{t.createMagicImage}</Button>
-               <Button variant="secondary" onClick={(e) => { e.stopPropagation(); if (story.coloringPageUrl) setShowPaintingModal(true); else { onGenerateColoringPage(story).then(() => setShowPaintingModal(true)); } }} disabled={isGeneratingColoringPage} className="!text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm">{isGeneratingColoringPage ? t.preparingCanvas : <><PaletteIcon /> {t.createColoringPage}</>}</Button>
+               <Button variant="secondary" onClick={(e) => { e.stopPropagation(); if (story.coloringPageUrl) setShowPaintingModal(true); else { onGenerateColoringPage(story).then(() => setShowPaintingModal(true)); } }} disabled={isGeneratingColoringPage} className="hidden !text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm">{isGeneratingColoringPage ? t.preparingCanvas : <><PaletteIcon /> {t.createColoringPage}</>}</Button>
             </div>
             <div className={`absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t ${story.isAiGenerated ? 'from-black/80' : 'from-black/60'} to-transparent pt-32`}>
                <h2 className="text-3xl font-black text-white leading-tight drop-shadow-md">{story.title}</h2>
