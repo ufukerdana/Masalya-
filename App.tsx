@@ -918,6 +918,36 @@ const App = () => {
   const t = TRANSLATIONS[lang];
   const themeConfig = THEME_STYLES[user.theme];
 
+  // Helper to process background generation of coloring pages
+  const runBackgroundGeneration = async (loadedStories: Story[]) => {
+      // Find stories needing coloring pages
+      const queue = loadedStories.filter(s => !s.coloringPageUrl);
+      
+      for (const story of queue) {
+        try {
+          // Delay 10 seconds between requests to respect rate limits
+          // This is critical for preventing 429 errors during bulk updates
+          await new Promise(resolve => setTimeout(resolve, 10000)); 
+
+          const url = await generateColoringPage(story.title);
+          if (url) {
+             const updated = { ...story, coloringPageUrl: url };
+             
+             // 1. Save to DB
+             await saveStoryToDB(updated);
+
+             // 2. Update State
+             setStories(prevStories => prevStories.map(s => s.id === story.id ? updated : s));
+             
+             // 3. Update Active Story if open
+             setActiveStory(prev => (prev && prev.id === story.id) ? updated : prev);
+          }
+        } catch (err) {
+          console.log("Background generation skipped for", story.title);
+        }
+      }
+  };
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -945,6 +975,9 @@ const App = () => {
         
         setStories(allStories);
         setUser(u => ({...u, createdStories: userGeneratedStories }));
+
+        // Start background generation for missing coloring pages
+        runBackgroundGeneration(allStories);
         
       } catch (e) {
         console.error("DB Init error", e);
@@ -962,7 +995,14 @@ const App = () => {
     }
   }, [isDarkMode]);
 
-  // Handle auto-generation of coloring page when story is opened
+  const handleStoryClick = (story: Story) => {
+    setActiveStory(story);
+    if (!user.createdStories.find(s => s.id === story.id)) {
+         // Increment read count logic if needed
+         setUser(u => ({...u, storiesRead: u.storiesRead + 1}));
+    }
+  };
+
   const handleGenerateColoringPage = async (story: Story) => {
       setIsGeneratingColoringPage(true);
       const url = await generateColoringPage(story.title);
@@ -974,23 +1014,6 @@ const App = () => {
            await saveStoryToDB(updatedStory);
       }
       setIsGeneratingColoringPage(false);
-  };
-
-  // Auto-generate coloring page on view if missing
-  useEffect(() => {
-     // Check if active story needs coloring page and we are not currently generating one
-     // We check activeStory.id to avoid running on every render, but we need to ensure we don't spam
-     if (activeStory && !activeStory.coloringPageUrl && !isGeneratingColoringPage) {
-         handleGenerateColoringPage(activeStory);
-     }
-  }, [activeStory?.id]);
-
-  const handleStoryClick = (story: Story) => {
-    setActiveStory(story);
-    if (!user.createdStories.find(s => s.id === story.id)) {
-         // Increment read count logic if needed
-         setUser(u => ({...u, storiesRead: u.storiesRead + 1}));
-    }
   };
 
   const handleGenerate = async (prompt: string, age: string, isInteractive: boolean, length: 'short' | 'long') => {
