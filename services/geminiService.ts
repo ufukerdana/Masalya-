@@ -6,6 +6,37 @@ const apiKey = process.env.API_KEY;
 // Safely initialize the client. If no key is present, we handle it in the function call.
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
+// --- Helper Functions for Rate Limiting ---
+
+// Helper to delay execution
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper to call API with retry logic for 429/Quota errors
+// Default: 4 retries, starting at 4 seconds delay (4s, 8s, 16s, 32s) -> covers ~60 seconds of waiting
+async function callWithRetry<T>(fn: () => Promise<T>, retries = 4, baseDelay = 4000): Promise<T> {
+  let attempt = 0;
+  while (attempt <= retries) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      const isQuotaError = error?.status === 429 || 
+                           error?.message?.includes('429') || 
+                           error?.message?.includes('Quota') || 
+                           error?.message?.includes('RESOURCE_EXHAUSTED');
+      
+      if (isQuotaError && attempt < retries) {
+        attempt++;
+        const waitTime = baseDelay * Math.pow(2, attempt - 1); // Exponential backoff
+        console.warn(`Rate limit hit (429). Retrying in ${waitTime}ms... (Attempt ${attempt}/${retries})`);
+        await delay(waitTime);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new Error("Max retries exceeded");
+}
+
 // Helpers for Audio Decoding
 function decode(base64: string) {
   const binaryString = atob(base64);
@@ -50,12 +81,12 @@ export const generateStoryImage = async (
   const imagePrompt = `A high quality children's book illustration of ${prompt}. Style: ${style}. No text, no words in the image.`;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [{ text: imagePrompt }],
       },
-    });
+    }));
 
     // Extract image data
     if (response.candidates?.[0]?.content?.parts) {
@@ -81,12 +112,12 @@ export const generateColoringPage = async (
   const imagePrompt = `A simple black and white coloring book page outline of ${prompt}. Thick lines, white background, no shading, no gray, high contrast, vector style, simple details for children to color. No text.`;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
         parts: [{ text: imagePrompt }],
       },
-    });
+    }));
 
     if (response.candidates?.[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
@@ -114,7 +145,7 @@ export const generateStorySpeech = async (
   const voiceName = language === 'tr' ? 'Kore' : 'Puck'; 
   
   try {
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: promptText }] }],
       config: {
@@ -125,7 +156,7 @@ export const generateStorySpeech = async (
             },
         },
       },
-    });
+    }));
 
     const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
     if (!base64Audio) return null;
@@ -203,15 +234,15 @@ export const generateStoryContent = async (
   systemInstruction += ` Do not add markdown code blocks (like \`\`\`json) around the output. Just the raw JSON string.`;
 
   try {
-    // 1. Generate Text
-    const response = await ai.models.generateContent({
+    // 1. Generate Text (with retry)
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `Write a story based on the following: ${prompt}`,
       config: {
         systemInstruction: systemInstruction,
         responseMimeType: "application/json",
       },
-    });
+    }));
 
     const text = response.text;
     if (!text) return null;
@@ -225,6 +256,7 @@ export const generateStoryContent = async (
     }
 
     // 2. Generate Image and Audio in Parallel
+    // Individual functions are now wrapped with callWithRetry, so they will handle rate limits independently.
     const [imageResult, audioResult] = await Promise.all([
       generateStoryImage(`${prompt} - ${storyData.title}`, ageGroup),
       !isInteractive ? generateStorySpeech(storyData.content, language) : Promise.resolve(null)
@@ -297,14 +329,14 @@ export const continueStory = async (
     Write the ${isFinalTurn ? 'FINAL conclusion' : 'next segment'}.
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         systemInstruction: systemInstruction,
         responseMimeType: "application/json",
       },
-    });
+    }));
 
     const text = response.text;
     if (!text) return null;
@@ -326,7 +358,7 @@ export const generateWordCard = async (
   const langText = language === 'tr' ? 'Turkish' : 'English';
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callWithRetry(() => ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `Read this story and pick ONE educational, interesting word suitable for a child aged ${ageGroup}. 
       Provide a simple definition and an example sentence. Language: ${langText}.
@@ -343,7 +375,7 @@ export const generateWordCard = async (
           required: ["word", "definition", "example"]
         } as any 
       },
-    });
+    }));
     
     const text = response.text;
     if (!text) return null;
