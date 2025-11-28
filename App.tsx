@@ -1,5 +1,5 @@
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { createRoot } from 'react-dom/client';
 import { Story, UserProfile, Language, Theme, AppView, CATEGORIES, AGE_GROUPS, Translation, StoryOption, ThemeId } from './types';
 import { TRANSLATIONS, STATIC_STORIES, WHITE_PLACEHOLDER } from './constants';
 import { generateStoryContent, generateStoryImage, continueStory, generateColoringPage, generateWordCard, generateStorySpeech } from './services/geminiService';
@@ -129,12 +129,17 @@ const formatTime = (time: number) => {
 
 // --- Components ---
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
+  children?: React.ReactNode;
+  className?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
   variant?: 'primary' | 'secondary' | 'ghost' | 'hero' | 'interactive' | 'danger' | 'orange';
   themeConfig?: typeof THEME_STYLES['magic'];
 }
 
-const Button = ({ children, className = '', variant = 'primary', themeConfig, ...props }: ButtonProps) => {
+const Button: React.FC<ButtonProps> = ({ children, className = '', variant = 'primary', themeConfig, ...props }) => {
   const currentTheme = themeConfig || THEME_STYLES['magic'];
   const baseStyle = "px-4 py-2 rounded-2xl font-bold transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-sm hover:shadow-md";
   
@@ -162,7 +167,7 @@ interface StoryCardProps {
   themeConfig: typeof THEME_STYLES['magic'];
 }
 
-const StoryCard = ({ story, onClick, t, themeConfig }: StoryCardProps) => (
+const StoryCard: React.FC<StoryCardProps> = ({ story, onClick, t, themeConfig }) => (
   <div 
     onClick={onClick}
     className={`${themeConfig.cardBg} rounded-3xl overflow-hidden shadow-lg shadow-black/5 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 group border-2 border-transparent hover:${themeConfig.border.split(' ')[0]} relative`}
@@ -513,7 +518,7 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
           <div className="relative h-56 sm:h-72 shrink-0 group bg-gray-100 dark:bg-gray-800">
             <img src={story.imageUrl} alt={story.title} className="w-full h-full object-cover" />
             <button onClick={onClose} className="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full backdrop-blur-md transition-colors z-[60] focus:outline-none"><XIcon /></button>
-            <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute top-4 left-4 z-20 flex flex-wrap gap-2">
                <Button variant="secondary" onClick={(e) => { e.stopPropagation(); onRegenerateImage(story); }} disabled={isGeneratingImage} className="!text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm">{isGeneratingImage ? t.painting : <><SparklesIcon /> {t.createMagicImage}</>}</Button>
                <Button variant="secondary" onClick={(e) => { e.stopPropagation(); if (story.coloringPageUrl) setShowPaintingModal(true); else { onGenerateColoringPage(story).then(() => setShowPaintingModal(true)); } }} disabled={isGeneratingColoringPage} className="!text-xs !py-1 !px-3 !rounded-full !bg-white/90 shadow-sm">{isGeneratingColoringPage ? t.preparingCanvas : <><PaletteIcon /> {t.createColoringPage}</>}</Button>
             </div>
@@ -546,6 +551,17 @@ const ReaderModal = ({ story, onClose, isFavorite, onToggleFavorite, onRegenerat
                ) : (
                   <AudioPlayer src={aiAudioUrl} title={t.aiNarration} themeConfig={themeConfig} />
                )}
+            </div>
+
+            <div className="mb-8">
+              <button
+                onClick={() => { if (story.coloringPageUrl) setShowPaintingModal(true); else { onGenerateColoringPage(story).then(() => setShowPaintingModal(true)); } }}
+                disabled={isGeneratingColoringPage}
+                className={`w-full py-3 rounded-2xl border-2 ${themeConfig.border} bg-white dark:bg-gray-800 flex items-center justify-center gap-2 font-bold ${themeConfig.textSub} shadow-sm hover:shadow-md transition-all active:scale-95 hover:bg-gray-50 dark:hover:bg-gray-700`}
+              >
+                {isGeneratingColoringPage ? <span className="animate-spin">✨</span> : <PaletteIcon />}
+                {isGeneratingColoringPage ? t.preparingCanvas : t.createColoringPage}
+              </button>
             </div>
 
             <div className={`prose dark:prose-invert prose-lg max-w-none ${themeConfig.textMain} leading-loose font-medium`}>
@@ -867,259 +883,261 @@ const ProfileView = ({ user, allStories, onStoryClick, onDeleteStory, onUpdateTh
 
 const App = () => {
   const [lang, setLang] = useState<Language>('tr');
-  const [theme, setTheme] = useState<Theme>('light');
   const [view, setView] = useState<AppView>('home');
-  const [activeStory, setActiveStory] = useState<Story | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
   
-  const [stories, setStories] = useState<Story[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    name: 'Küçük Okur',
-    theme: 'magic', // Default theme
-    storiesRead: 0,
+  // New State for Dark Mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // Mock user for now, normally would load
+  const [user, setUser] = useState<UserProfile>({
+    name: 'Zeynep',
+    theme: 'magic',
+    storiesRead: 12,
     favorites: [],
     createdStories: []
   });
 
+  const [stories, setStories] = useState<Story[]>(STATIC_STORIES);
+  const [createdStory, setCreatedStory] = useState<Story | null>(null);
+  const [activeStory, setActiveStory] = useState<Story | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [isGeneratingColoringPage, setIsGeneratingColoringPage] = useState(false);
   const [isFindingWord, setIsFindingWord] = useState(false);
-  const [lastCreatedStory, setLastCreatedStory] = useState<Story | null>(null);
-  const [activeFilter, setActiveFilter] = useState('all');
-  const [interactiveStepCount, setInteractiveStepCount] = useState(0);
 
   const t = TRANSLATIONS[lang];
-  const hasInitialized = useRef(false);
-  const themeConfig = THEME_STYLES[userProfile.theme] || THEME_STYLES['magic'];
+  const themeConfig = THEME_STYLES[user.theme];
 
   useEffect(() => {
-    if (theme === 'dark') document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
-  }, [theme]);
-
-  // Load Data
-  useEffect(() => {
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
-    const initialize = async () => {
-       try {
-          await initDB();
-          const dbStories = await getAllStoriesFromDB();
-          const dbStoryMap = new Map(dbStories.map(s => [s.id, s]));
-          const mergedStories: Story[] = [];
-          
-          for (const staticStory of STATIC_STORIES) {
-              if (dbStoryMap.has(staticStory.id)) {
-                  mergedStories.push(dbStoryMap.get(staticStory.id)!);
-                  dbStoryMap.delete(staticStory.id);
-              } else { mergedStories.push(staticStory); }
-          }
-          dbStoryMap.forEach(story => mergedStories.push(story));
-          setStories(mergedStories);
-          
-          const myGenerated = mergedStories.filter(s => s.id.startsWith('gen_'));
-          
-          // Load User Profile Preference from localStorage if available (simple persistence for theme)
-          const savedTheme = localStorage.getItem('masalya_theme') as ThemeId;
-          
-          setUserProfile(prev => ({ 
-              ...prev, 
-              createdStories: myGenerated,
-              theme: savedTheme && THEME_STYLES[savedTheme] ? savedTheme : 'magic'
-          }));
-
-          // Background Asset Generation Queue...
-          for (const s of mergedStories) {
-             if (STATIC_STORIES.find(ss => ss.id === s.id)) {
-                 const needsImage = s.imageUrl === WHITE_PLACEHOLDER;
-                 const needsAudio = !s.aiAudioUrl;
-                 if (needsImage || needsAudio) {
-                     let updated = { ...s };
-                     let changed = false;
-                     if (needsImage) {
-                         try {
-                            const newImg = await generateStoryImage(`${s.title}. ${s.content.substring(0, 50)}`, s.ageGroup);
-                            if (newImg) { updated.imageUrl = newImg; changed = true; }
-                         } catch(e) {}
-                     }
-                     if (needsAudio) {
-                         try {
-                             const newAudio = await generateStorySpeech(s.content, s.language);
-                             if (newAudio) { updated.aiAudioUrl = newAudio; changed = true; }
-                         } catch(e) {}
-                     }
-                     if (changed) {
-                         setStories(prev => prev.map(ps => ps.id === updated.id ? updated : ps));
-                         await saveStoryToDB(updated);
-                     }
-                 }
-             }
-          }
-       } catch (e) { console.error(e); setStories(STATIC_STORIES); }
+    const init = async () => {
+      try {
+        await initDB();
+        const customStories = await getAllStoriesFromDB();
+        setStories([...STATIC_STORIES, ...customStories]);
+        setUser(u => ({...u, createdStories: customStories }));
+      } catch (e) {
+        console.error("DB Init error", e);
+      }
     };
-    initialize();
+    init();
   }, []);
-
-  // Sync active story updates
+  
+  // New Effect for Dark Mode
   useEffect(() => {
-     if (activeStory) {
-         const found = stories.find(s => s.id === activeStory.id);
-         if (found && (found.imageUrl !== activeStory.imageUrl || found.aiAudioUrl !== activeStory.aiAudioUrl || found.coloringPageUrl !== activeStory.coloringPageUrl || found.audioUrl !== activeStory.audioUrl || found.wordOfTheDay !== activeStory.wordOfTheDay)) {
-             setActiveStory(found);
-         }
-     }
-  }, [stories, activeStory]);
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
-  const handleUpdateTheme = (newTheme: ThemeId) => {
-      setUserProfile(prev => ({...prev, theme: newTheme}));
-      localStorage.setItem('masalya_theme', newTheme);
-  };
-
-  const handleGenerateStory = async (prompt: string, age: string, isInteractive: boolean, length: 'short' | 'long') => {
-    setIsGenerating(true); setLastCreatedStory(null);
-    try {
-      const result = await generateStoryContent(prompt, lang, age, isInteractive, length);
-      if (result) {
-        const newStory: Story = {
-          id: `gen_${Date.now()}`,
-          title: result.title, content: result.content, category: CATEGORIES.FANTASY, ageGroup: age, imageUrl: result.imageUrl || `https://picsum.photos/400/300?random=${Date.now()}`,
-          isAiGenerated: true, author: 'AI Storyteller', language: lang, createdAt: Date.now(), isInteractive: isInteractive, choices: result.choices, wordOfTheDay: result.wordOfTheDay, aiAudioUrl: result.aiAudioUrl
-        };
-        await saveStoryToDB(newStory);
-        setStories(prev => [newStory, ...prev]);
-        setUserProfile(prev => ({ ...prev, createdStories: [newStory, ...prev.createdStories] }));
-        setLastCreatedStory(newStory);
-      }
-    } catch (error) { alert("Error generating story."); } finally { setIsGenerating(false); }
-  };
-  const handleContinueStory = async (story: Story, choice: string) => {
-    const nextStep = interactiveStepCount + 1;
-    try {
-      const result = await continueStory(story.content, choice, lang, story.ageGroup, nextStep);
-      if (result) {
-        setInteractiveStepCount(nextStep);
-        const updatedStory = { ...story, content: story.content + "\n\n" + result.content, choices: result.choices };
-        await saveStoryToDB(updatedStory);
-        setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-        setActiveStory(updatedStory);
-      }
-    } catch (error) {}
-  };
-  const handleRegenerateImage = async (story: Story) => {
-    setIsGeneratingImage(true);
-    try {
-      const newImageUrl = await generateStoryImage(`${story.title}. ${story.content.substring(0, 50)}`, story.ageGroup);
-      if (newImageUrl) {
-        const updatedStory = { ...story, imageUrl: newImageUrl };
-        await saveStoryToDB(updatedStory);
-        setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-        setActiveStory(updatedStory);
-      }
-    } catch (error) {} finally { setIsGeneratingImage(false); }
-  };
-  const handleGenerateColoringPage = async (story: Story) => {
-    setIsGeneratingColoringPage(true);
-    try {
-      const coloringUrl = await generateColoringPage(`${story.title}`);
-      if (coloringUrl) {
-         const updatedStory = { ...story, coloringPageUrl: coloringUrl };
-         await saveStoryToDB(updatedStory);
-         setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-         setActiveStory(updatedStory);
-      }
-    } catch (error) {} finally { setIsGeneratingColoringPage(false); }
-  };
-  const handleDiscoverWord = async (story: Story) => {
-    setIsFindingWord(true);
-    try {
-      const wordCard = await generateWordCard(story.content, lang, story.ageGroup);
-      if (wordCard) {
-        const updatedStory = { ...story, wordOfTheDay: wordCard };
-        await saveStoryToDB(updatedStory);
-        setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-        setActiveStory(updatedStory);
-      }
-    } catch (error) {} finally { setIsFindingWord(false); }
-  };
-  const handleSaveRecording = async (story: Story, audioUrl: string | null) => {
-      const updatedStory = { ...story, audioUrl: audioUrl || undefined };
-      await saveStoryToDB(updatedStory);
-      setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-      setUserProfile(prev => ({ ...prev, createdStories: prev.createdStories.map(s => s.id === story.id ? updatedStory : s) }));
-      setActiveStory(updatedStory);
-  };
-  const handleSaveAiAudio = async (story: Story, audioUrl: string | null) => {
-    const updatedStory = { ...story, aiAudioUrl: audioUrl || undefined };
-    await saveStoryToDB(updatedStory);
-    setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
-    setActiveStory(updatedStory);
-  };
-  const handleToggleFavorite = () => {
-    if (!activeStory) return;
-    setUserProfile(prev => {
-      const isFav = prev.favorites.includes(activeStory.id);
-      return { ...prev, favorites: isFav ? prev.favorites.filter(id => id !== activeStory.id) : [...prev.favorites, activeStory.id] };
-    });
-  };
-  const handleDeleteStory = async (id: string) => {
-    await deleteStoryFromDB(id);
-    setStories(prev => prev.filter(s => s.id !== id));
-    setUserProfile(prev => ({ ...prev, createdStories: prev.createdStories.filter(s => s.id !== id), favorites: prev.favorites.filter(favId => favId !== id) }));
-  };
-  const readStory = (story: Story) => {
-    setInteractiveStepCount(0); // Reset for new session
+  const handleStoryClick = (story: Story) => {
     setActiveStory(story);
-    setUserProfile(prev => ({ ...prev, storiesRead: prev.storiesRead + 1 }));
+    if (!user.createdStories.find(s => s.id === story.id)) {
+         // Increment read count logic if needed
+         setUser(u => ({...u, storiesRead: u.storiesRead + 1}));
+    }
+  };
+
+  const handleGenerate = async (prompt: string, age: string, isInteractive: boolean, length: 'short' | 'long') => {
+     setIsGenerating(true);
+     setCreatedStory(null);
+     try {
+         const result = await generateStoryContent(prompt, lang, age, isInteractive, length);
+         if (result) {
+             const newStory: Story = {
+                 id: `gen_${Date.now()}`,
+                 title: result.title,
+                 content: result.content,
+                 category: CATEGORIES.FANTASY, // Default category
+                 ageGroup: age,
+                 imageUrl: result.imageUrl || WHITE_PLACEHOLDER,
+                 isAiGenerated: true,
+                 author: 'AI',
+                 language: lang,
+                 createdAt: Date.now(),
+                 isInteractive,
+                 choices: result.choices,
+                 wordOfTheDay: result.wordOfTheDay,
+                 aiAudioUrl: result.aiAudioUrl
+             };
+             await saveStoryToDB(newStory);
+             setStories(prev => [newStory, ...prev]);
+             setUser(u => ({...u, createdStories: [newStory, ...u.createdStories]}));
+             setCreatedStory(newStory);
+         }
+     } catch(e) {
+         console.error(e);
+         alert("Error generating story. Please try again.");
+     } finally {
+         setIsGenerating(false);
+     }
+  };
+
+  const handleToggleFavorite = () => {
+      if (!activeStory) return;
+      const isFav = user.favorites.includes(activeStory.id);
+      let newFavs;
+      if (isFav) {
+          newFavs = user.favorites.filter(id => id !== activeStory.id);
+      } else {
+          newFavs = [...user.favorites, activeStory.id];
+      }
+      setUser({...user, favorites: newFavs});
+  };
+
+  const handleDeleteStory = async (id: string) => {
+      await deleteStoryFromDB(id);
+      setStories(prev => prev.filter(s => s.id !== id));
+      setUser(u => ({...u, createdStories: u.createdStories.filter(s => s.id !== id)}));
+      if (activeStory?.id === id) setActiveStory(null);
+      if (createdStory?.id === id) setCreatedStory(null);
+  };
+
+  const handleRegenerateImage = async (story: Story) => {
+      setIsGeneratingImage(true);
+      const newUrl = await generateStoryImage(story.title + " " + story.content.substring(0, 100), story.ageGroup);
+      if (newUrl) {
+          const updatedStory = { ...story, imageUrl: newUrl };
+          // Update in list
+          setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+          if (activeStory?.id === story.id) setActiveStory(updatedStory);
+          // Save if it's a DB story
+          if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+      }
+      setIsGeneratingImage(false);
+  };
+  
+  const handleGenerateColoringPage = async (story: Story) => {
+      setIsGeneratingColoringPage(true);
+      const url = await generateColoringPage(story.title);
+      if (url) {
+          const updatedStory = { ...story, coloringPageUrl: url };
+           setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+           if (activeStory?.id === story.id) setActiveStory(updatedStory);
+           if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+      }
+      setIsGeneratingColoringPage(false);
+  };
+
+  const handleContinueStory = async (story: Story, choice: string) => {
+      // Logic for continuing interactive story
+       const turnCount = (story.content.match(/---/g) || []).length; // Simple turn counting or manage in state
+       const result = await continueStory(story.content, choice, lang, story.ageGroup, turnCount);
+       if (result) {
+           const newContent = story.content + "\n\n---\n\n" + "**" + choice + "**\n" + result.content;
+           const updatedStory = { ...story, content: newContent, choices: result.choices };
+           setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+           if (activeStory?.id === story.id) setActiveStory(updatedStory);
+           if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+       }
+  };
+
+  const handleSaveRecording = async (story: Story, blobUrl: string | null) => {
+      const updatedStory = { ...story, audioUrl: blobUrl || undefined };
+      setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+      if (activeStory?.id === story.id) setActiveStory(updatedStory);
+      if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+  };
+  
+  const handleSaveAiAudio = async (story: Story, url: string | null) => {
+      const updatedStory = { ...story, aiAudioUrl: url || undefined };
+      setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+      if (activeStory?.id === story.id) setActiveStory(updatedStory);
+      if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+  };
+  
+  const handleDiscoverWord = async (story: Story) => {
+       setIsFindingWord(true);
+       const wordCard = await generateWordCard(story.content, lang, story.ageGroup);
+       if (wordCard) {
+            const updatedStory = { ...story, wordOfTheDay: wordCard };
+            setStories(prev => prev.map(s => s.id === story.id ? updatedStory : s));
+            if (activeStory?.id === story.id) setActiveStory(updatedStory);
+            if (story.isAiGenerated) await saveStoryToDB(updatedStory);
+       }
+       setIsFindingWord(false);
   };
 
   return (
-    <div className={`min-h-screen font-sans ${themeConfig.appBg} transition-colors duration-500`}>
-      <header className={`fixed top-0 left-0 right-0 z-40 ${themeConfig.headerBg} border-b`}>
-        <div className="max-w-4xl mx-auto px-4 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 ${themeConfig.primary} rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-md`}>M</div>
-            <h1 className={`text-2xl font-black ${themeConfig.textMain} tracking-tight`}>Masalya</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => setLang(l => l === 'tr' ? 'en' : 'tr')} className={`px-3 py-1.5 rounded-xl text-xs font-black ${themeConfig.secondary}`}>{lang.toUpperCase()}</button>
-            <button onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')} className={`p-2.5 rounded-full ${themeConfig.secondary} hover:scale-105 transition-transform`}>{theme === 'light' ? <MoonIcon /> : <SunIcon />}</button>
-          </div>
-        </div>
+    <div className={`min-h-screen ${themeConfig.appBg} transition-colors duration-500 font-sans selection:bg-purple-200 dark:selection:bg-purple-900`}>
+      {/* Header */}
+      <header className={`fixed top-0 left-0 right-0 z-40 ${themeConfig.headerBg} px-6 py-4 flex items-center justify-between border-b shadow-sm transition-colors duration-500`}>
+         <div className="flex items-center gap-3">
+           <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${themeConfig.gradient} flex items-center justify-center text-white shadow-lg`}>
+             <SparklesIcon />
+           </div>
+           <h1 className={`text-2xl font-black tracking-tight ${themeConfig.textMain}`}>Masalya</h1>
+         </div>
+         <div className="flex items-center gap-2">
+            {/* Dark Mode Toggle */}
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)} 
+              className={`p-2 rounded-full ${themeConfig.textSub} hover:bg-black/5 dark:hover:bg-white/10 transition-colors`}
+              title={isDarkMode ? t.lightMode : t.darkMode}
+            >
+              {isDarkMode ? <SunIcon /> : <MoonIcon />}
+            </button>
+            
+            <button onClick={() => setLang(l => l === 'tr' ? 'en' : 'tr')} className={`px-3 py-1.5 rounded-full text-xs font-bold border-2 ${themeConfig.border} ${themeConfig.textSub} uppercase`}>{lang}</button>
+         </div>
       </header>
 
-      <main className="pt-24 px-4 max-w-4xl mx-auto min-h-[calc(100vh-80px)]">
-        {view === 'home' && <HomeView stories={stories} lang={lang} onStoryClick={readStory} activeFilter={activeFilter} setActiveFilter={setActiveFilter} t={t} themeConfig={themeConfig} />}
-        {view === 'create' && <CreateView onGenerate={handleGenerateStory} isGenerating={isGenerating} t={t} createdStory={lastCreatedStory} onStoryClick={readStory} themeConfig={themeConfig} />}
-        {view === 'profile' && <ProfileView user={userProfile} allStories={stories} onStoryClick={readStory} onDeleteStory={handleDeleteStory} onUpdateTheme={handleUpdateTheme} t={t} themeConfig={themeConfig} />}
+      {/* Main Content */}
+      <main className="pt-24 px-4 sm:px-6 max-w-7xl mx-auto min-h-screen">
+        {view === 'home' && <HomeView stories={stories} lang={lang} onStoryClick={handleStoryClick} activeFilter={activeFilter} setActiveFilter={setActiveFilter} t={t} themeConfig={themeConfig} />}
+        {view === 'create' && <CreateView onGenerate={handleGenerate} isGenerating={isGenerating} t={t} createdStory={createdStory} onStoryClick={handleStoryClick} themeConfig={themeConfig} />}
+        {view === 'profile' && <ProfileView user={user} allStories={stories} onStoryClick={handleStoryClick} onDeleteStory={handleDeleteStory} onUpdateTheme={(th) => setUser({...user, theme: th})} t={t} themeConfig={themeConfig} />}
       </main>
+
+      {/* Bottom Nav */}
+      <nav className={`fixed bottom-6 left-1/2 -translate-x-1/2 ${themeConfig.navBg} rounded-full p-2 shadow-2xl border ${themeConfig.border} flex items-center gap-2 z-40 backdrop-blur-xl`}>
+        <button onClick={() => setView('home')} className={`p-4 rounded-full transition-all duration-300 ${view === 'home' ? `${themeConfig.primary} shadow-lg scale-110` : `text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800`}`}><HomeIcon /></button>
+        <button onClick={() => setView('create')} className={`p-4 rounded-full transition-all duration-300 ${view === 'create' ? `${themeConfig.primary} shadow-lg scale-110` : `text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800`}`}><div className="relative"><SparklesIcon /><div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></div></div></button>
+        <button onClick={() => setView('profile')} className={`p-4 rounded-full transition-all duration-300 ${view === 'profile' ? `${themeConfig.primary} shadow-lg scale-110` : `text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800`}`}><UserIcon /></button>
+      </nav>
+      
+      {/* Reader Modal */}
+      {activeStory && (
+        <ReaderModal 
+          story={activeStory} 
+          onClose={() => setActiveStory(null)} 
+          isFavorite={user.favorites.includes(activeStory.id)} 
+          onToggleFavorite={handleToggleFavorite}
+          onRegenerateImage={handleRegenerateImage}
+          onGenerateColoringPage={handleGenerateColoringPage}
+          onContinueStory={handleContinueStory}
+          onSaveRecording={handleSaveRecording}
+          onSaveAiAudio={handleSaveAiAudio}
+          onDiscoverWord={handleDiscoverWord}
+          isGeneratingImage={isGeneratingImage}
+          isGeneratingColoringPage={isGeneratingColoringPage}
+          isFindingWord={isFindingWord}
+          t={t} 
+          themeConfig={themeConfig}
+        />
+      )}
 
       {/* Full Screen Loading Overlay */}
       {isGenerating && (
-        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-200 touch-none">
-            <div className={`bg-white dark:bg-gray-900 p-8 rounded-[2rem] shadow-2xl flex flex-col items-center text-center border-4 ${themeConfig.border} transform scale-110`}>
-                <div className="relative mb-6">
-                    <div className={`w-24 h-24 rounded-full border-4 border-gray-100 dark:border-gray-800`}></div>
-                    <div className={`absolute top-0 left-0 w-24 h-24 rounded-full border-4 border-t-transparent animate-spin ${themeConfig.textSub.replace('text-', 'border-').split(' ')[0]}`}></div>
-                    <div className="absolute inset-0 flex items-center justify-center text-4xl animate-bounce">✨</div>
-                </div>
-                <h3 className={`text-2xl font-black ${themeConfig.textMain} mb-2 animate-pulse`}>{t.generating}</h3>
-                <p className={`text-sm font-bold ${themeConfig.textSub} opacity-70`}>Sihir yapılıyor...</p>
-            </div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-wait animate-in fade-in duration-300">
+           <div className={`${themeConfig.cardBg} p-8 rounded-[2rem] shadow-2xl border-4 ${themeConfig.border} flex flex-col items-center gap-6 max-w-sm w-full mx-4 transform transition-all`}>
+               <div className={`w-20 h-20 rounded-full ${themeConfig.secondary} flex items-center justify-center relative`}>
+                  <div className={`absolute inset-0 border-4 ${themeConfig.accent.replace('text-', 'border-')} border-t-transparent rounded-full animate-spin`}></div>
+                  <SparklesIcon />
+               </div>
+               <div className="text-center">
+                 <h3 className={`text-xl font-black ${themeConfig.textMain} mb-2`}>{t.generating}</h3>
+                 <p className={`${themeConfig.textSub} opacity-80 text-sm font-medium animate-pulse`}>
+                   {lang === 'tr' ? 'Lütfen bekleyin, sihirli sözcükler birleşiyor...' : 'Please wait, magical words are coming together...'}
+                 </p>
+               </div>
+           </div>
         </div>
       )}
-
-      <nav className={`fixed bottom-0 left-0 right-0 z-40 ${themeConfig.navBg} border-t pb-safe`}>
-        <div className="max-w-md mx-auto flex justify-around p-3">
-          <button onClick={() => setView('home')} className={`flex flex-col items-center gap-1 p-3 w-20 rounded-3xl transition-all duration-300 ${view === 'home' ? `${themeConfig.secondary} ${themeConfig.textMain} scale-110` : 'text-gray-400 hover:text-gray-600'}`}><HomeIcon /><span className="text-[10px] font-black tracking-wide">{t.home}</span></button>
-          <button onClick={() => setView('create')} className={`flex flex-col items-center gap-1 p-3 w-20 rounded-3xl transition-all duration-300 ${view === 'create' ? `${themeConfig.secondary} ${themeConfig.textMain} scale-110` : 'text-gray-400 hover:text-gray-600'}`}><SparklesIcon /><span className="text-[10px] font-black tracking-wide">{t.create}</span></button>
-          <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 p-3 w-20 rounded-3xl transition-all duration-300 ${view === 'profile' ? `${themeConfig.secondary} ${themeConfig.textMain} scale-110` : 'text-gray-400 hover:text-gray-600'}`}><UserIcon /><span className="text-[10px] font-black tracking-wide">{t.profile}</span></button>
-        </div>
-      </nav>
-
-      <ReaderModal story={activeStory} onClose={() => setActiveStory(null)} isFavorite={activeStory ? userProfile.favorites.includes(activeStory.id) : false} onToggleFavorite={handleToggleFavorite} onRegenerateImage={handleRegenerateImage} onGenerateColoringPage={handleGenerateColoringPage} onContinueStory={handleContinueStory} onSaveRecording={handleSaveRecording} onSaveAiAudio={handleSaveAiAudio} onDiscoverWord={handleDiscoverWord} isGeneratingImage={isGeneratingImage} isGeneratingColoringPage={isGeneratingColoringPage} isFindingWord={isFindingWord} t={t} themeConfig={themeConfig} />
     </div>
   );
 };
 
-const root = createRoot(document.getElementById('root')!);
-root.render(<App />);
+export default App;

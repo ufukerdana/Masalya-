@@ -186,7 +186,7 @@ export const STATIC_STORIES: Story[] = [
     language: 'tr',
     createdAt: TS
   },
-  // --- YENİ EKLENEN HAYVAN HİKAYELERİ (10 ADET - UZUN) ---
+  // --- HAYVAN HİKAYELERİ (10 ADET - UZUN) ---
   {
     id: 'animal_long_1',
     title: 'Meraklı Kaplumbağa Tosi ve Büyük Okyanus',
@@ -307,7 +307,127 @@ export const STATIC_STORIES: Story[] = [
     language: 'tr',
     createdAt: TS
   },
-  // --- YENİ MACERA HİKAYELERİ (20 ADET) ---
+  {
+    id: 'animal_long_11',
+    title: 'Zürafa Zühtü ve Bulutlar Ülkesi',
+    content: "Zürafa Zühtü, savananın en uzun boylu hayvanıydı. Boynu o kadar uzundu ki, diğer hayvanların hiç göremediği şeyleri görürdü. Sabahları güneşin doğuşunu herkesten önce o izler, en yüksek ağaçların en taze yapraklarını o yerdi. Ama Zühtü'nün bir hayali vardı: Bulutlara dokunmak. 'Acaba pamuk gibi yumuşak mı?' diye düşünürdü hep. Bir gün, savanada büyük bir kuraklık başladı. Nehirler çekildi, otlar sarardı. Tüm hayvanlar endişeliydi. Aslan Kral, 'Su bulmalıyız, yoksa hepimiz susuzluktan perişan olacağız,' dedi ama kimse suyun nerede olduğunu bilmiyordu.\n\nZühtü, o uzun boynuyla ufka baktı. Çok uzaklarda, dağların arkasında kara bulutların toplandığını gördü. 'Arkadaşlar!' diye bağırdı. 'Dağların ardında yağmur var! Oraya gitmeliyiz.' Ama dağlar çok uzaktı ve yol tehlikelerle doluydu. Küçük hayvanlar korktu. 'Biz oraya kadar yürüyemeyiz,' dediler. Zühtü onlara cesaret verdi. 'Ben yolu görebiliyorum. En güvenli patikaları seçeceğim. Beni takip edin.' Böylece büyük göç başladı. Zühtü en önde, boynu bir deniz feneri gibi dik, yolu gösteriyordu.\n\nYolculuk sırasında Zühtü'nün uzun boynu birçok kez hayat kurtardı. Uzaktan gelen kum fırtınasını erkenden görüp herkesi mağaralara sakladı. Nehrin sığ yerlerini yukarından seçip yavruların güvenle geçmesini sağladı. Sonunda dağların eteğine vardıklarında, gökyüzü griye döndü ve ilk damlalar düştü. Hayvanlar sevinçle dans etmeye başladı. Zühtü başını kaldırdı. O an, alçalan bir bulut kümesi tam yüzüne değdi. Islak, serin ve yumuşacıktı. Zühtü gülümsedi. Sadece hayaline kavuşmamış, aynı zamanda arkadaşlarını da kurtarmıştı. O günden sonra Zühtü'ye 'Bulutların Arkadaşı' dediler.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_12',
+    title: 'Cesur Kalpli Tavşan Tofi',
+    content: "Tofi, Havuçlu Vadi'nin en hızlı ama ne yazık ki en ürkek tavşanıydı. Bir yaprak düşse zıplar, rüzgar esse yuvasına kaçardı. Diğer tavşanlar onunla 'Titrek Tofi' diye dalga geçerlerdi. Tofi bu duruma çok üzülür ama korkusuna engel olamazdı. Bir gün vadiye kötü kalpli bir kurt sürüsü dadandı. Kurtlar, tavşanların kışlık erzaklarını çalıyor, yuvalarını bozuyorlardı. Tavşanlar Konseyi toplandı ama kimse kurtların karşısına çıkmaya cesaret edemiyordu.\n\nTofi, yuvasının girişinde titreyerek beklerken, küçük bir kuşun yaralı kanadıyla çırpındığını gördü. Tam o sırada bir yılan kuşa doğru süzülüyordu. Tofi ne olduğunu anlamadan, içinden gelen bir dürtüyle fırladı. Yılanın tam önüne atladı ve arka ayaklarını sertçe yere vurarak 'Güm!' diye bir ses çıkardı. Yılan bu ani gürültüden korkup kaçtı. Kuş, Tofi'ye teşekkür etti. 'Sen çok cesursun Tofi,' dedi. Tofi şaşırdı. 'Ben mi? Ben korkağın tekiyim.' Kuş gülümsedi. 'Cesaret korkmamak değil, korkuna rağmen doğru olanı yapmaktır.'\n\nBu sözler Tofi'nin kalbinde bir ışık yaktı. O gece kurtlar köye indiğinde, Tofi bir plan yaptı. Vadinin yankı yapan kayalıklarını biliyordu. Gizlice oraya tırmandı. Kurtlar erzak deposuna yaklaşırken, Tofi derin bir nefes aldı ve var gücüyle, kalın bir sesle bağırdı: 'HEEEY! BURAYI TERK EDİN!'. Sesi kayalarda yankılandı, büyüdü, büyüdü ve sanki dev bir canavar kükrüyor gibi duyuldu. Kurtlar bu korkunç sesi duyunca, 'Burada devler var!' diyerek arkalarına bakmadan kaçtılar. Sabah olduğunda herkes kurtların gittiğini gördü. Kimse o sesi kimin çıkardığını anlamamıştı ama Tofi biliyordu. O artık Titrek Tofi değil, Vadi'nin gizli koruyucusuydu.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_13',
+    title: 'Arı Vızvız ve Dev Ayçiçeği',
+    content: "Kovanın en çalışkan arısı Vızvız, her gün kilometrelerce uçar, en tatlı nektarları toplardı. Ancak bu yıl çiçekler azdı ve kovan halkı endişeliydi. Kraliçe Arı, 'Bize efsanevi Dev Ayçiçeği'nin nektarı lazım, ancak o Güneş Vadisi'nde yetişir ve yolu çok tehlikelidir,' dedi. Vızvız, kovanı için bu görevi gönüllü olarak kabul etti. Yanına en iyi arkadaşı, biraz tembel ama çok neşeli olan Bombus Arısı Tombul'u da aldı.\n\nYolculukları boyunca örümcek ağlarından kaçtılar, yağmur damlalarıyla savaştılar. Bir gün mola verdiklerinde, kanadı incinmiş bir kelebek gördüler. Tombul, 'Vaktimiz yok Vızvız, devam edelim,' dedi. Ama Vızvız, 'Yardım etmeden gidemeyiz,' diyerek kelebeğin kanadını onarmak için bal mumu kullandı. İyileşen kelebek onlara teşekkür etti ve 'Aradığınız vadiye giden kestirme yolu biliyorum,' diyerek onlara rehberlik etti. Kelebek sayesinde tehlikeli 'Dikenli Tünel'i geçmek zorunda kalmadılar.\n\nSonunda Güneş Vadisi'ne vardıklarında gözlerine inanamadılar. Ortada, gökyüzüne kadar uzanan, altından yapılmış gibi parlayan devasa bir ayçiçeği vardı. Ama çiçeğin etrafı, nektarını paylaşmak istemeyen eşek arılarıyla çevriliydi. Vızvız, onlarla savaşmak yerine konuşmayı denedi. 'Bizim kovanımız açlık tehlikesiyle karşı karşıya. Eğer paylaşırsanız, biz de size en iyi petek yapma tekniğimizi öğretiriz,' dedi. Eşek arıları şaşırdı. Daha önce kimse onlara bir şey öğretmeyi teklif etmemişti. Anlaşmayı kabul ettiler. Vızvız ve Tombul, kovana döndüklerinde kahraman gibi karşılandılar. Vızvız, gücün kavgada değil, dayanışmada olduğunu herkese kanıtlamıştı.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_14',
+    title: 'Maymun Manki\'nin Paylaşma Dersi',
+    content: "Ormanın en yaramaz maymunu Manki, her şeyi kendine isterdi. Bir muz ağacı bulsa kimseye söylemez, hepsini tek başına yerdi. Bir gün, ormanın derinliklerinde parıl parıl parlayan, altından bir muz buldu. Bu sihirli bir muzdu! Efsaneye göre bu muzu yiyen, dünyanın en güçlü hayvanı olurdu. Manki sevinçten havalara uçtu. 'Artık ormanın kralı ben olacağım!' diye düşündü. Muzu kucakladı ve kimse görmesin diye en yüksek ağacın tepesine kaçtı.\n\nAncak ağacın tepesinde bir sorun vardı. Manki muzu yemek için soymaya çalıştı ama kabuğu o kadar sertti ki soyulmuyordu. Dişledi, tırmaladı, taşa vurdu ama nafile. Muz açılmıyordu. Günler geçti, Manki ağacın tepesinde aç ve susuz kaldı. Aşağı inmek istiyordu ama muzu bırakırsa başkası alır diye korkuyordu. Aşağıdan geçen arkadaşları onu çağırdı. 'Manki, gel oyun oynayalım!' dediler. Manki, 'Gidin başımdan, bu muz benim!' diye bağırdı. Yalnızlık canına tak etmişti.\n\nBir gece rüyasında yaşlı bir maymun gördü. Yaşlı maymun, 'O muz sadece paylaşılınca açılır,' dedi. Manki uyanınca düşündü. Güçlü olmak mı istiyordu, yoksa mutlu olmak mı? Muzu kucaklayıp aşağı indi. Arkadaşlarının yanına gitti. 'Bu muzu tek başıma açamadım, birlikte deneyelim mi?' dedi. Arkadaşları sevinçle kabul etti. Hep birlikte el ele verip muzu tuttuklarında, kabuk kendiliğinden 'Çıt!' diye açıldı. İçinden mis gibi kokan dilimler çıktı. Herkes birer parça yedi. Manki o an dünyanın en güçlü hayvanı olmadı belki ama dünyanın en lezzetli muzunu en sevdiği arkadaşlarıyla yemenin mutluluğunu yaşadı. Ve anladı ki, mutluluk paylaştıkça çoğalan tek şeydi.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_15',
+    title: 'Kutup Ayısı Beyaz’ın Renkli Rüyası',
+    content: "Kuzey Kutbu'nda her yer beyazdı. Kar beyaz, buz beyaz, gökyüzü çoğu zaman beyaz... Kutup ayısı Beyaz, bu tek düze renkten çok sıkılmıştı. Annesine, 'Neden dünyamızda başka renk yok?' diye sorardı. Annesi, 'Bizim rengimiz budur, bizi saklar ve korur,' derdi. Ama Beyaz, rüyalarında hep yemyeşil çayırlar, kırmızı çiçekler, sarı güneşler görürdü.\n\nBir gün, buzulların arasında gezerken, rüzgarın sürüklediği garip bir nesne buldu. Bu, insanların düşürdüğü renkli bir atkıydı. Kırmızı, mavi, yeşil, sarı çizgileri vardı. Beyaz, atkıyı boynuna doladı ve kendini dünyanın en özel ayısı gibi hissetti. Ancak atkıyı gören diğer ayılar onunla dalga geçti. 'Bu da ne? Çok komik görünüyorsun!' dediler. Beyaz üzüldü ve atkıyı bir buz mağarasına sakladı.\n\nO gece gökyüzünde mucizevi bir şey oldu. Kuzey Işıkları (Aurora) dans etmeye başladı. Yeşil, mor, pembe ışıklar gökyüzünü boyadı. Beyaz hayranlıkla izledi. Sonra buzun üzerinde yansıyan renklere baktı. Kendi tüyleri de yeşil ve mora bürünmüştü. O an anladı ki, doğa aslında renksiz değildi, sadece renklerini saklıyordu. Koşarak atkısını geri aldı. Ertesi gün atkısıyla gururla dolaştı. Diğer yavrular da renklerin ne kadar güzel olduğunu görüp ondan parçalar istediler. Beyaz, atkısını söküp her arkadaşına renkli bir ip verdi. O günden sonra Kuzey Kutbu'ndaki küçük ayılar, boyunlarında renkli iplerle dolaşarak bembeyaz dünyaya neşe kattılar.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_16',
+    title: 'Ahtapot Ahtapot’un Sekiz Kolu',
+    content: "Denizler altında yaşayan Ahtapot Ahtapot (adı biraz komikti ama o bunu severdi), sekiz kolunu da aynı anda kullanmakta zorlanırdı. Biriyle yemek yerken diğeriyle saçını taramaya çalışır, öbürüyle yazı yazar, diğeriyle balıklara el sallardı. Ama kolları hep birbirine dolanır, düğüm olurdu. Okuldaki Beden Eğitimi dersinde Yengeç Öğretmen, 'Koordinasyonun çok zayıf Ahtapot,' derdi. Ahtapot çok üzülürdü.\n\nBir gün Deniz Şenlikleri düzenlendi. Büyük bir orkestra kurulacaktı ama davulcu hastalanmıştı. Şenlik iptal olmak üzereydi. Herkes üzgündü. Ahtapot çekinerek öne çıktı. 'Ben deneyebilir miyim?' dedi. Herkes güldü. 'Sen mi? Daha yürürken ayakların birbirine dolanıyor!' dediler. Ama başka çareleri yoktu. Ahtapot davul setinin başına geçti. Önünde 8 farklı davul ve zil vardı.\n\nMüzik başladı. Ahtapot derin bir nefes aldı. Bir koluyla ritim tuttu, diğeriyle zile vurdu, öbürüyle trampet çaldı... Sekiz kolu da adeta dans ediyordu! Kolları birbirine dolanmıyor, aksine muazzam bir uyum içinde hareket ediyordu. Müziğin ritmi hızlandıkça Ahtapot coştu. Deniz halkı büyülenmişti. Ahtapot'un beyni, karmaşık ritimleri yönetmek için yaratılmıştı. Günlük işlerde sakar olan Ahtapot, meğer doğuştan bir müzisyenmiş! Şenlik bittiğinde herkes onu ayakta alkışladı (balıklar yüzgeçlerini çırptı). Ahtapot, her yeteneğin doğru yerde parlayacağını anlamıştı.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_17',
+    title: 'Kanguru Zıpzıp ve Yıldız Yarışı',
+    content: "Avustralya'nın kızıl çöllerinde yaşayan Zıpzıp, zıplamayı çok seven bir kanguruydu. Ama o, sadece ileri değil, yukarı zıplamayı severdi. Hedefi Ay'a dokunmaktı! Her gece dolunaya bakar, 'Bir gün oraya ulaşacağım,' derdi. Arkadaşları Koala ve Emu, 'Boşuna uğraşma Zıpzıp, yerçekimi diye bir şey var,' derlerdi.\n\nBir gün ormanda 'Büyük Zıplama Yarışması' düzenlendi. Ödül, efsanevi 'Gümüş Okaliptüs Yaprağı'ydı. Zıpzıp yarışmaya katıldı. Rakipleri güçlü bacaklı kangurulardı. Yarış başladı. Herkes ileri doğru uzun atlamalar yaparken, Zıpzıp yükseğe zıplıyordu. Seyirciler şaşkındı. Yarışın ortasında, yavru bir kuşun yuvasından düştüğünü ve yüksek bir dalda asılı kaldığını gördüler. Anne kuş çırpınıyordu ama yavrusuna ulaşamıyordu. \n\nZıpzıp yarışı bırakıp ağacın altına geldi. Derin bir nefes aldı, bacak kaslarını gerdi ve 'Hoppp!' diye fırladı. O kadar yükseğe zıpladı ki, neredeyse bulutlara değecekti. Havada süzülürken nazikçe yavru kuşu aldı ve güvenle yere, annesinin yanına indirdi. Yarışı kazanamamıştı belki ama herkesin gönlünü kazanmıştı. Yarışmanın hakemi Yaşlı Wombat, Gümüş Yaprağı Zıpzıp'a verdi. 'Yarışı en uzağa giden değil, en yükseğe çıkan, kalbi en yüce olan kazandı,' dedi. Zıpzıp o gece Ay'a bakarken gülümsedi. Ay'a dokunamamıştı ama bir hayata dokunmuştu.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_18',
+    title: 'Uçmayı Öğrenen Penguen Pingu',
+    content: "Güney Kutbu'nda yaşayan Pingu, diğer penguenlerden farklıydı. O, penguenlerin de kuş olduğunu ve kuşların uçması gerektiğini düşünüyordu. Her gün buz tepelerine tırmanır, kanatlarını çırparak kendini aşağı bırakırdı. Ama her seferinde 'Pat!' diye karların üzerine düşerdi. Martılar ona güler, 'Sizin kanatlarınız uçmak için değil, yüzgeç onlar!' diye bağırırlardı.\n\nPingu pes etmedi. Rüzgarın gücünü kullanmayı denedi, uçurtma yaptı, hatta balon bulmaya çalıştı. Ama hiçbiri işe yaramadı. Üzgün bir şekilde okyanus kenarına oturdu. Babası yanına geldi. 'Oğlum,' dedi. 'Gel sana bir sır göstereyim.' Babası suya daldı. Pingu da peşinden atladı. \n\nSuyun altına girdikleri an, Pingu bir mucize yaşadı. O hantal kanatları, suyun içinde bir jet motoruna dönüşmüştü! Kanatlarını çırptığında suyun içinde mermi gibi ilerliyordu. Sağa, sola, yukarı, aşağı... İstediği her yöne özgürce hareket ediyordu. Balık sürülerini kovaladı, buzulların altından geçti. Sanki gökyüzünde değil, denizin maviliğinde uçuyordu! Sudan çıktığında yüzü gülüyordu. 'Baba!' dedi. 'Biz uçamıyor değiliz, biz denizin altında uçuyoruz!' Pingu artık gökyüzüne bakıp iç geçirmiyor, her fırsatta okyanusa dalıp kendi gökyüzünde dans ediyordu.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_19',
+    title: 'Kunduz Kardeşlerin Barajı',
+    content: "Tak ve Tik adında iki kunduz kardeş vardı. İkisi de mühendisti ve nehrin üzerine yeni bir baraj kuracaklardı. Tak, 'Hızlı olalım, hemen bitirelim ki oyuna zaman kalsın,' diyordu. Tik ise, 'Hayır, sağlam olsun, yavaş ve dikkatli yapalım,' diyordu. Tak, ince dalları ve çamuru rastgele yığarak bir günde barajını bitirdi. 'Bak!' dedi. 'Bitti bile! Sen hala temelle uğraşıyorsun.' Tik ise kalın kütükleri birbirine kenetliyor, taşlarla destekliyor ve özenle çalışıyordu. Barajı bitirmesi bir hafta sürdü.\n\nTak, kardeşiyle dalga geçiyordu. 'Ne kadar yavaşsın Tik!' Ama bir gece, dağlardan gelen kar suları nehri coşturdu. Büyük bir sel geliyordu. Tak'ın barajı, suyun gücüne sadece beş dakika dayanabildi. Dallar dağıldı, çamurlar aktı ve Tak sele kapıldı. 'İmdat!' diye bağırdı. Tik, sağlam barajının üzerindeydi. Hemen suya atlayıp kardeşini kurtardı ve kendi barajının üzerine çekti. \n\nTik'in barajı taş gibi sağlamdı. Su ne kadar yükselirse yükselsin, kütükler yerinden oynamadı. Sabah olduğunda Tak, harap olmuş barajına baktı. Sonra kardeşine sarıldı. 'Haklıymışsın Tik,' dedi. 'Emek verilmeden yapılan iş, ilk zorlukta yıkılıyormuş.' O günden sonra Tak ve Tik birlikte çalıştılar. Tak enerjisini, Tik ise sabrını koydu ve nehrin en muhteşem barajlarını inşa ettiler.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'animal_long_20',
+    title: 'Baykuş Bilge ve Güneşin Doğuşu',
+    content: "Bilge Baykuş, ormanın en yaşlısıydı. Herkes ona danışırdı. Ama Bilge'nin büyük bir derdi vardı: O bir gece kuşuydu ve hayatı boyunca hiç güneşin doğuşunu görmemişti. Güneş doğarken uykuya dalar, battığında uyanırdı. Rüyalarında hep o anlatılan 'turuncu, pembe, altın sarısı' renkleri görürdü. 'Bir gün,' dedi. 'Bir gün uyumayacağım ve güneşi göreceğim.'\n\nO gece kahve çekirdekleri çiğnedi, yüzünü soğuk suyla yıkadı. Göz kapakları ağırlaşıyordu ama direndi. Sabaha karşı orman değişmeye başladı. Önce kuşların cıvıltısı duyuldu. Sonra gökyüzü lacivertten mora döndü. Bilge heyecanla gözlerini açtı. Ufukta bir kızıllık belirdi. Sonra bulutlar pembeleşti. Ve nihayet, dağların arkasından o muhteşem ateş topu yükseldi.\n\nOrman altın rengi bir ışıkla yıkandı. Çiğ damlaları pırlanta gibi parladı. Bilge, gözlerini kamaştıran bu güzellik karşısında ağladı. 'Ne kadar da sıcak, ne kadar da umut dolu,' diye fısıldadı. Güneş ışığı tüylerini ısıttı. O an, gecenin huzuru ile gündüzün coşkusunu birleştirdi kalbinde. Artık çok yorgundu. Yuvasına çekildi ve hayatının en güzel, en renkli uykusuna daldı. Artık masallarda anlattığı güneşi, sadece duymamış, yaşamıştı.",
+    category: CATEGORIES.ANIMALS,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  // --- MACERA HİKAYELERİ (20 ADET) ---
   {
     id: 'adv_long_1',
     title: 'Gizemli Ada’nın Sırrı',
@@ -431,7 +551,7 @@ export const STATIC_STORIES: Story[] = [
   {
     id: 'adv_long_11',
     title: 'Issız Dağın Zirvesi',
-    content: "Dağcı bir babanın kızı olan Asya, hep babasıyla 'Ejderha Tepesi'ne tırmanmanın hayalini kurardı. Burası, zirvesi bulutların üzerinde olan, çok dik ve tehlikeli bir dağdı. Asya 12 yaşına geldiğinde babası, 'Artık hazırsın,' dedi. Hazırlıklarını yaptılar; ipler, kancalar, çadırlar ve bolca yiyecek aldılar. Tırmanışın ilk günü kolay geçti, dağ keçilerini izleyip neşeli şarkılar söylediler.\n\nAncak ikinci gün hava bozdu. Kar fırtınası başladı. Görüş mesafesi sıfıra indi. Bir mağaraya sığınıp fırtınanın geçmesini beklediler. Gece mağaranın derinliklerinden garip sesler geldi. Asya gidip baktığında, kanadı kırık bir kartal buldu. Kartalı besleyip sardılar. Fırtına dindiğinde tırmanışa devam ettiler ama zirveye giden yol buz tutmuştu. Babası kayıp düştü ve bacağını incitti. Yürüyemiyordu. Asya korktu ama pes etmedi.\n\nZirveye tek başına çıkıp yardım çağrısı yapması gerekiyordu. Zorlu kayaları tırmandı, elleri dondu ama durmadı. Zirveye ulaştığında işaret fişeğini yaktı. Tam o sırada, iyileştirdiği kartal gökyüzünde belirdi ve Asya'nın başının üzerinde daireler çizdi, sanki ona 'başardın' diyordu. Kurtarma helikopteri geldiğinde Asya, babasına sarıldı. Zirveye çıkmışlardı ama en büyük başarı, zorluklar karşısında birbirlerine destek olmalarıydı.",
+    content: "Dağcı bir babanın kızı olan Asya, hep babasıyla 'Ejderha Tepesi'ne tırmanmanın hayalini kurardı. Burası, zirvesi bulutların üzerinde olan, çok dik ve tehlikeli bir dağdı. Asya 12 yaşına geldiğinde babası, 'Artık hazırsın,' dedi. Hazırlıklarını yaptılar; ipler, kancalar, çadırlar ve bolca yiyecek aldılar. Tırmanışın ilk günü kolay geçti, dağ keçilerini izleyip neşeli şarkılar söylediler.\n\nAncak ikinci gün hava bozdu. Kar fırtınası başladı. Görüş mesafesi sıfıra indi. Bir mağaraya sığınıp fırtınanın geçmesini beklediler. Gece mağaranın derinliklerine garip sesler geldi. Asya gidip baktığında, kanadı kırık bir kartal buldu. Kartalı besleyip sardılar. Fırtına dindiğinde tırmanışa devam ettiler ama zirveye giden yol buz tutmuştu. Babası kayıp düştü ve bacağını incitti. Yürüyemiyordu. Asya korktu ama pes etmedi.\n\nZirveye tek başına çıkıp yardım çağrısı yapması gerekiyordu. Zorlu kayaları tırmandı, elleri dondu ama durmadı. Zirveye ulaştığında işaret fişeğini yaktı. Tam o sırada, iyileştirdiği kartal gökyüzünde belirdi ve Asya'nın başının üzerinde daireler çizdi, sanki ona 'başardın' diyordu. Kurtarma helikopteri geldiğinde Asya, babasına sarıldı. Zirveye çıkmışlardı ama en büyük başarı, zorluklar karşısında birbirlerine destek olmalarıydı.",
     category: CATEGORIES.ADVENTURE,
     ageGroup: AGE_GROUPS.PRETEEN,
     imageUrl: WHITE_PLACEHOLDER,
@@ -548,6 +668,7 @@ export const STATIC_STORIES: Story[] = [
     language: 'tr',
     createdAt: TS
   },
+  // --- HALK HİKAYELERİ ---
   {
     id: 'folk_new_1',
     title: 'Keloğlan ve Padişahın İmkansız İsteği',
@@ -901,6 +1022,127 @@ export const STATIC_STORIES: Story[] = [
     title: 'Kibritçi Kız',
     content: "Yılbaşı gecesiydi. Lapa lapa kar yağıyordu ve hava dondurucu soğuktu. Herkes evinde sıcak sobanın başında, güzel yemekler yiyip eğlenirken, küçük bir kız çocuğu sokakta, incecik giysileriyle titriyordu. Elinde satmaya çalıştığı bir demet kibrit vardı ama kimse durup almıyordu. Eve dönemiyordu çünkü hiç para kazanamamıştı, babası ona kızardı.\n\nSoğuktan parmakları uyuşmuştu. Bir köşeye büzüldü. Isınmak için bir kibrit yaktı. Kibritin alevi parlayınca kendini sıcak bir sobanın başında hayal etti. Alev sönünce hayal de kayboldu. Bir kibrit daha yaktı. Bu sefer zengin bir sofra, kızarmış bir kaz ve harika yemekler gördü. O da söndü.\n\nÜçüncü kibriti yaktığında, çok sevdiği ama ölmüş olan büyükannesini gördü. Büyükanne ona gülümsüyordu. Küçük kız, büyükanne gitmesin diye elindeki tüm kibritleri yaktı. Ortalık gündüz gibi aydınlandı. Büyükanne kızı kollarına aldı ve birlikte gökyüzüne, soğuğun ve açlığın olmadığı yere uçtular. Ertesi sabah insanlar köşede donmuş küçük kızı buldular, yüzünde huzurlu bir gülümseme vardı. Kimse onun gördüğü güzel hayalleri bilmiyordu.",
     category: CATEGORIES.FOLK,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  // --- YENİ EKLENEN FANTASTİK HİKAYELER (10 ADET - UZUN) ---
+  {
+    id: 'fantasy_long_1',
+    title: 'Gökkuşağı Bekçisi ve Renk Hırsızı',
+    content: "Bulutların çok ötesinde, insanların hayal bile edemeyeceği kadar yükseklerde, 'Prizma Krallığı' vardı. Bu krallık, gökkuşağının doğduğu yerdi. Burada her şey renkten yapılmıştı; evler yakut kırmızısı, yollar kehribar sarısı, nehirler ise saf safir mavisiydi. Krallığın en önemli görevi, yağmurlardan sonra dünyaya gökkuşağını göndermekti. Bu görevi 'Gökkuşağı Bekçisi' olan genç Işık üstlenmişti. Işık'ın elinde sihirli bir kristal asa vardı ve bu asayla gökyüzüne renkleri saçardı.\n\nAncak bir gün, Prizma Krallığı'na kasvetli bir gölge düştü. 'Gri Baron' adında, renklerden nefret eden ve her yeri sadece gri görmek isteyen bir büyücü, krallığın Renk Pınarı'nı çaldı! Pınar kuruyunca renkler solmaya başladı. Kırmızı pembeye, mavi gökyüzü beyaza döndü. Işık, asasını salladı ama asadan sadece cılız bir duman çıktı. Baron, pınarı 'Karanlık Kule'ye hapsetmişti. Işık, cesurca kuleye gitmeye karar verdi. Yanına en sadık dostu, renk değiştirebilen küçük bukalemun 'Palet'i aldı.\n\nYolda 'Solgun Orman'dan geçtiler. Ağaçlar ağlıyordu çünkü yapraklarının yeşili gitmişti. Işık, onlara umut verdi: 'Merak etmeyin, renklerinizi geri getireceğim.' Kuleye vardıklarında, kapıda 'Sessizlik Bekçileri' vardı. Bu bekçiler sadece siyah ve beyazdı. Işık, asasının içinde kalan son bir damla renk özünü kullanarak onlara 'Mor' rengi fırlattı. Bekçiler mor rengi görünce şaşkına döndü ve gülümsemeye başladı, çünkü ilk defa gri dışında bir şey görüyorlardı. Işık içeri süzüldü.\n\nGri Baron, pınarın başında oturmuş, dünyayı griye boyamanın planlarını yapıyordu. Işık saklandığı yerden çıktı. 'Renkler sadece süs değildir Baron! Onlar duygudur, neşedir, hayattır!' diye bağırdı. Baron kahkaha attı. 'Gri huzurdur, sessizliktir!' diyerek Işık'a gri bir büyü fırlattı. Palet hemen öne atıldı ve büyüyü yansıtarak rengarenk bir kalkana dönüştü. Işık bu fırsatı kullandı ve asasını pınarın kilidine vurdu. 'Kırıl!' diye haykırdı. Kilit parçalandı ve pınardan gökkuşağının yedi rengi fışkırdı! Renkler Baron'a değince, Baron'un gri pelerini maviye, şapkası turuncuya döndü. Baron şaşkınlıkla kendine baktı. 'Bu... bu çok güzel,' dedi. Meğer Baron, hiç renk görmediği için onlardan nefret ediyormuş. O günden sonra Baron, 'Renkli Baron' oldu ve Prizma Krallığı'nın en iyi ressamı olarak çalışmaya başladı. Dünyaya ise eskisinden daha parlak gökkuşakları gönderildi.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_2',
+    title: 'Zamanı Durduran Saat',
+    content: "Eski bir saatçi dükkanının tozlu raflarında, kimsenin fark etmediği gümüş bir cep saati duruyordu. Küçük Deniz, dedesinin dükkanında saklambaç oynarken bu saati buldu. Saatin akrebi ve yelkovanı yoktu, sadece tek bir altın düğmesi vardı. Deniz merakla düğmeye bastı. 'Tık!' sesiyle birlikte etrafındaki her şey dondu. Havada uçan toz taneleri asılı kaldı, dükkanın kedisi zıplarken havada durdu, dedesi elindeki çay bardağıyla heykel gibi kaldı.\n\nDeniz şok olmuştu. Tekrar düğmeye bastı, her şey hareket etmeye devam etti. Kedi yere indi, dedesi çayını yudumladı. Deniz sihirli bir saat bulmuştu! Zamanı durdurabiliyordu. İlk başta bu çok eğlenceliydi. Okulda teneffüs zilini beklemeden zamanı durdurup bahçede oynuyor, dondurması erimesin diye zamanı durdurup yiyordu. Hatta bir keresinde, yere düşen bir vazoyu havada yakalamak için zamanı dondurmuş ve annesinin 'aferin'ini almıştı.\n\nAncak bir gün, ormanda yürürken yaralı bir kuş gördü. Kuşun kanadı incinmişti. Deniz yardım etmek istedi ama kuş korkup kaçmaya çalıştı. Deniz, kuşu yakalayıp iyileştirmek için zamanı durdurdu. Kuşu eline aldı, sardı sarmaladı. Ama zaman durduğu için kuş iyileşmiyordu. Yarası kapanmıyor, kalbi atmıyordu. Deniz saatlerce, günlerce bekledi (kendi zamanında), ama kuş donmuş haldeydi. Deniz o an anladı ki, iyileşmek için, büyümek için, yaşamak için zamanın akması gerekiyordu. \n\nZamanı durdurmak, hayatı durdurmak demekti. Çiçekler açmıyor, rüzgar esmiyor, nehirler akmıyordu. Dünya bir fotoğraf karesine dönmüştü ve bu çok sıkıcıydı. Deniz ağlayarak düğmeye bastı ve zamanı bir daha durdurmamak üzere başlattı. Kuş zamanla iyileşti ve uçtu. Deniz saati dedesine götürdü. 'Bu saat bozuk dede,' dedi. Dedesi gülümsedi, 'Belki de en doğrusu budur evlat. Her anın kıymetini, o an geçip giderken anlarız,' dedi ve saati en derin çekmeceye kaldırdı.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_3',
+    title: 'Bulutların Üzerindeki Krallık',
+    content: "Maya, köyündeki en hayalperest kızdı. Herkes tarlada çalışırken o sırtüstü yatar, bulutları izlerdi. 'Orada birileri yaşıyor olmalı,' derdi. Köyün yaşlıları ona gülerdi. O yıl büyük bir kuraklık oldu. Aylardır tek damla yağmur yağmamıştı. Tarlalar kurudu, nehirler çekildi. Maya, bulutların neden yağmur bırakmadığını merak etti. 'Gidip sormalıyım,' dedi.\n\nKöyün kenarındaki 'Dev Fasulye Sırığı' efsanesini hatırladı. Dedesi, 'Eğer kalpten istersen, en küçük tohum bile göğe uzanır,' demişti. Maya, son kalan suyunu küçük bir fasulye tanesine döktü. Gece boyunca mucizevi bir şey oldu. Fasulye filizlendi, büyüdü, büyüdü ve bulutların üzerine kadar uzandı. Maya korkmadan tırmandı. \n\nBulutların üzerine vardığında gözlerine inanamadı. Burada pamuktan yapılmış gibi yumuşak kaleler, sislerin üzerinde yürüyen insanlar vardı. Ama herkes çok üzgündü. 'Bulut Krallığı'nın kralı 'Gürleyen Dev' hastalanmıştı. Kralın neşesi gök gürültüsü, gözyaşları ise yağmurdu. Ama Kral depresyona girdiği için ne gülüyor ne ağlıyordu, sadece boş boş oturuyordu. Maya Kral'ın sarayına gitti. 'Kralım,' dedi. 'Aşağıda insanlar, hayvanlar susuzluktan ölüyor. Sizin gözyaşlarınıza ihtiyacımız var.'\n\nKral, 'Ağlamak istemiyorum, çok yorgunum,' dedi. Maya düşündü. Kralı ağlatmak zordu ama güldürmek? Maya, köyündeki en komik hikayeleri anlatmaya başladı. Sakar eşeğini, dans eden tavukları anlattı. Kral önce hafifçe gülümsedi. Sonra kıkırdadı. En sonunda 'Hah hah ha!' diye kahkaha atmaya başladı. Kral güldükçe gök gürledi, şimşekler çaktı. Kral o kadar çok güldü ki, gözlerinden mutluluk gözyaşları akmaya başladı. Bu gözyaşları aşağıya sağanak yağmur olarak indi! \n\nKöy kurtulmuştu. Maya aşağı indiğinde herkes bayram ediyordu. Kimse Maya'nın nereye gittiğini bilmiyordu ama o günden sonra ne zaman gök gürlese ve yağmur yağsa, Maya gökyüzüne bakar ve 'Kral yine çok gülüyor,' diye düşünürdü.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_4',
+    title: 'Aynalar Labirenti',
+    content: "Lunaparkın en gizemli köşesinde 'Sihirli Aynalar Evi' vardı. Kimse oraya girmek istemezdi çünkü girenlerin kaybolduğu söylenirdi. Cesur Can, bu efsanelere inanmadı ve içeri girdi. İlk başta her şey normaldi; aynalar onu şişman, zayıf, uzun veya kısa gösteriyordu. Can gülerek ilerledi. Ancak bir aynanın önünde durduğunda garip bir şey oldu. Yansıması, Can ne yaparsa tersini yapıyordu! Can sağ elini kaldırdı, yansıma sol elini kaldırmadı, aşağı indirdi.\n\nBirden ayna bir su birikintisi gibi dalgalandı ve Can'ı içine çekti! Can gözlerini açtığında 'Ters Dünya'daydı. Burada her şey tersti. Ağaçların kökleri havada, yaprakları yerdeydi. İnsanlar geri geri yürüyordu. Güneş batıdan doğup doğudan batıyordu. Can'ın yansıması karşısına dikildi. Adı 'Nac' idi. Nac, 'Hoş geldin,' dedi (tabii 'nidleg şoH' diye duyuldu ama Can anladı). 'Buradan çıkmak istiyorsan labirenti tersten çözmelisin.'\n\nCan labirente girdi. Sağa dönmesi gereken yerde sola, ileri gitmesi gereken yerde geri gitti. Çok zordu, beyni karışıyordu. Bir ara ağlamak istedi ama Ters Dünya'da ağlayınca gözyaşları yukarı, gökyüzüne uçuyordu. Bu onu güldürdü. Yolda kaybolmuş başka yansımalarla karşılaştı. Onlara yardım etti. 'Mantığını değil, hislerini dinle,' dedi bir yansıma. \n\nSonunda çıkış kapısını buldu. Ama kapının kolu yoktu. Sadece bir yazı vardı: 'Çıkmak için girmeyi dile.' Can mantıken kapıyı açmaya çalıştı ama olmadı. Sonra yazıyı tersten düşündü. Arkasını döndü ve kapıdan uzaklaşmaya çalıştı. O uzaklaşmaya çalıştıkça kapı ona yaklaştı ve kendiliğinden açıldı! Can kendini tekrar lunaparkta buldu. Dışarı çıktığında her şey normaldi. Ama Can artık hayata farklı bakıyordu. Bazen bir sorunu çözmek için ona tersten bakmak, farklı bir açıdan yaklaşmak gerektiğini öğrenmişti.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_5',
+    title: 'Rüyaları Dokuyan Örümcek',
+    content: "Gece olduğunda, herkes uyuduğunda, odaların tavan köşelerinde yaşayan küçük, gümüş renkli bir örümcek uyanırdı. Adı İpek'ti. İpek sıradan bir örümcek değildi; o bir 'Rüya Dokuyucusu'ydu. Çocukların yatağının üzerine görünmez ağlarını örerdi. Bu ağlar sinek yakalamak için değil, kabusları yakalamak içindi.\n\nBir gece, küçük Elif çok huzursuz uyuyordu. 'Kabus Kralı' ve onun gölge ordusu Elif'in rüyasına girmeye çalışıyordu. Siyah dumanlar halinde tavandan süzüldüler. İpek hemen harekete geçti. Sekiz bacağıyla hızla ağ örmeye başladı. Gümüş iplikler, yıldız tozuyla kaplıydı. Kabus Kralı ağa takıldı. 'Bırak beni küçük böcek!' diye kükredi. İpek korkmadı. 'Bu çocuğun rüyaları bana emanet,' dedi.\n\nİpek, kabusun siyah ipliklerini alıp onları değiştirmeye başladı. Korkunç canavarı, sevimli bir kediye dönüştürdü. Karanlık ormanı, şekerden bir parka çevirdi. Fırtınayı, tatlı bir melodiye dönüştürdü. Elif uykusunda gülümsedi. Kabus Kralı eriyip gitti. Ancak İpek çok yorulmuştu. Son bir gayretle, Elif'e en güzel rüyayı, uçan bir atla gökkuşağında gezdiği rüyayı dokudu.\n\nSabah olduğunda Elif neşeyle uyandı. 'Anne! Harika bir rüya gördüm!' diye bağırdı. Annesi yatağı düzeltirken tavandaki küçük örümcek ağını gördü. 'Ah, yine örümcek,' diyip bozacakken, ağın üzerindeki çiğ damlalarının güneşle parladığını ve tıpkı bir kalbe benzediğini gördü. Kıyamadı. İpek, köşesinde dinlenirken gülümsedi. Görünmez kahramanlar alkış beklemezdi, onların ödülü çocukların sabahki gülümsemesiydi.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_6',
+    title: 'Kristal Mağaranın Ejderhası',
+    content: "Köy halkı, dağın tepesindeki mağarada yaşayan ejderhadan çok korkardı. Efsaneye göre ejderha ateş püskürtür, köyleri yakardı. Bu yüzden kimse dağa yaklaşmazdı. Oysa gerçek bambaşkaydı. Ejderha 'Pırıltı', aslında çok nazik ve sanata düşkün bir yaratıktı. Ateş püskürtmezdi, onun yerine ağzından renkli kristal buharları çıkarırdı. Mağarası bir hazine odası değil, dev bir sanat atölyesiydi.\n\nKüçük bir çoban olan Ali, bir gün keçisini ararken mağaraya kadar çıktı. İçeriden korkunç sesler değil, melodik bir mırıldanma geliyordu. Merakla içeri girdi. Gördüğü manzara karşısında büyülendi. Duvarlar rengarenk kristallerle kaplıydı. Ejderha, dev pençeleriyle narin bir kristal heykel yapıyordu. Ali'yi görünce Pırıltı korktu ve saklanmaya çalıştı. 'Beni incitme!' dedi ejderha incecik bir sesle.\n\nAli güldü. 'Sen dev gibisin, ben küçücüğüm. Asıl sen beni incitme,' dedi. Pırıltı rahatladı. 'İnsanlar beni canavar sanıyor. Oysa ben sadece güzellik yaratmak istiyorum,' dedi. Ali, Pırıltı'nın yaptığı heykellere hayran kaldı. Pırıltı, nefesiyle camı şekillendiriyor, ona hayat veriyordu. Ali, 'Bunu köylülere göstermeliyiz,' dedi. Pırıltı tereddüt etti ama Ali'ye güvendi.\n\nO gece Ali, köy meydanına Pırıltı'nın yaptığı, içinde ışık yanan kristal bir fener getirdi. Fener o kadar güzeldi ki, herkes hayran kaldı. Ali gerçeği anlattı. Köylüler önce inanmadılar ama sonra Pırıltı'yı davet ettiler. Pırıltı köye indiğinde kimseye zarar vermedi, aksine çocuklara kristalden oyuncaklar yaptı, köyün meydanına dev bir çeşme inşa etti. Köylüler korkularının yersiz olduğunu anladılar. Bilinmeyenden korkmak yerine onu tanımaya çalışsalardı, bu güzellikleri yıllar önce keşfedeceklerdi. Pırıltı ve köy halkı sonsuza dek dostça yaşadılar.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_7',
+    title: 'Denizaltı Kütüphanesi',
+    content: "Okyanusun en derin noktasında, insanların ve balıkların bile bilmediği gizli bir kütüphane vardı. Bu kütüphanenin kitapları kağıttan değil, deniz kabuklarından ve inci tabletlerden yapılmıştı. Kitaplar suyun altında okunabiliyordu. Kütüphanenin koruyucusu, bilge bir deniz kızı olan Mercan'dı. Mercan'ın görevi, denizlerin tarihini, balinaların şarkılarını ve batık gemilerin hikayelerini kaydetmekti.\n\nBir gün, kütüphaneye genç bir ahtapot geldi. Adı Mürekkep'ti. Mürekkep çok meraklıydı ama biraz sakardı. 'Ben de yazar olmak istiyorum,' dedi. Mercan ona güldü. 'Senin sekiz kolun var, çok hızlı yazabilirsin ama dikkatli olmalısın,' dedi. Mürekkep işe başladı. Sekiz koluyla aynı anda sekiz farklı deniz kabuğuna yazılar yazıyordu. Ancak heyecanlanınca mürekkep kesesini patlattı ve tüm kütüphane simsiyah oldu!\n\nMercan çok üzüldü. Yüzyıllık kayıtlar görünmez olmuştu. Mürekkep utancından bir kayanın altına saklandı. Ama sonra aklına bir fikir geldi. 'Benim mürekkebim özeldir, karanlıkta parlar,' dedi. Işık veren denizanalarını çağırdılar. Denizanaları kütüphanede dolaşınca, Mürekkep'in döktüğü siyahlık parlamaya başladı. Ve mucizevi bir şekilde, o siyahlığın altından eski yazılar daha da belirgin, neon renklerde ortaya çıktı. \n\nHata gibi görünen şey, kütüphaneyi daha da muhteşem yapmıştı. Artık kitaplar karanlık okyanus tabanında fener gibi parlıyordu. Uzaktaki balıklar bile bu ışığı görüp okumaya geldiler. Mürekkep, hatasından ders çıkardı ve o günden sonra 'Işıklı Kitaplar'ın yazarı olarak ün kazandı. Mercan ise ona baş kütüphaneci yardımcısı ünvanını verdi.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_8',
+    title: 'Yıldız Tozu Toplayıcısı',
+    content: "Her gece gökyüzünden kayan yıldızlar nereye gider? Çoğu insan onların yok olduğunu sanır. Ama Sera biliyordu. O bir 'Yıldız Tozu Toplayıcısı'ydı. Elinde ay ışığından örülmüş bir ağ ile her gece çatılara çıkar, düşen yıldızların tozlarını toplardı. Bu tozlar çok değerliydi çünkü sihirli yaratıkları iyileştiriyordu. Kanadı kırık periler, ateşi sönen ejderhalar, rengi solan tek boynuzlu atlar... Hepsi Sera'nın kapısını çalardı.\n\nBir gece, gökyüzünden devasa, kıpkırmızı bir yıldız düştü. Sera hemen olay yerine koştu. Yıldızın düştüğü yerde küçük, korkmuş bir 'Ateş Ruhu' buldu. Ruh sönmek üzereydi. 'Çok soğuk burası,' diye titredi. Sera onu ceketine sardı. Onu iyileştirmek için çok miktarda altın yıldız tozuna ihtiyacı vardı ama elinde sadece gümüş tozlar kalmıştı. Altın tozlar sadece 'Kuyruklu Yıldız' geçtiğinde bulunurdu ve o gece kuyruklu yıldız geçmeyecekti.\n\nSera pes etmedi. 'Kendi ışığını yaratmalısın,' dedi Ateş Ruhu'na. Onu evine götürdü, şöminenin yanına yatırdı. Ona sıcak çikolata verdi, en sevdiği masalları okudu, ona şarkılar söyledi. Sera'nın sevgisi ve ilgisi, en güçlü büyüden daha etkiliydi. Ateş Ruhu yavaş yavaş ısınmaya, parlamaya başladı. Kendi içindeki gücü keşfetti. Sabah olduğunda Ruh tamamen iyileşmişti. 'Beni yıldız tozuyla değil, kalbinle iyileştirdin,' dedi ve gökyüzüne geri yükseldi. O günden sonra Sera anladı ki, bazen şifa dışarıdan değil, içeriden ve sevgiden gelirdi.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.KID,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_9',
+    title: 'Konuşan Ağaçlar Ormanı',
+    content: "Dünyanın unuttuğu bir köşede, ağaçların fısıldaştığı, köklerinin yer altında birbirine hikayeler anlattığı bir orman vardı. Meşe ağaçları tarihi, söğüt ağaçları aşkı, çam ağaçları ise maceraları anlatırdı. Ancak insanlar artık ormanı dinlemiyor, sadece odun olarak görüyorlardı. Orman küsmüştü, artık konuşmuyordu. Yapraklar sararmış, kuşlar terk etmişti.\n\nKüçük Doğa, ormanın kenarında yaşayan bir kızdı. Bir gün ormana girdiğinde derin bir sessizlik hissetti. Bir meşe ağacına sarıldı ve kulağını gövdesine dayadı. 'Seni duyuyorum,' diye fısıldadı. 'Lütfen bana anlat.' Meşe ağacı şaşırdı. Yüzyıllardır kimse ona sarılmamıştı. Derinden gelen bir gıcırtıyla, 'Yalnızız...' dedi. Doğa, 'Ben buradayım,' dedi.\n\nDoğa her gün ormana gitti. Ağaçlara kitap okudu, onlara su taşıdı, gövdelerini okşadı. Onun sevgisi, ağaçların kalbini yumuşattı. Yavaş yavaş orman tekrar fısıldamaya başladı. Doğa, ağaçların anlattığı hikayeleri defterine yazdı. 'Bin yıl önce burada bir kral yaşardı,' dedi Çınar. 'Şu nehrin altında bir hazine var,' dedi Kavak. Doğa bu hikayeleri köydeki insanlara anlattı. İnsanlar hayretler içinde kaldı. Ormanın sadece odun olmadığını, canlı bir tarih, bir ruh olduğunu anladılar. Baltalarını bıraktılar, fidanlar dikmeye başladılar. Orman tekrar yeşerdi, kuşlar geri döndü. Ve rüzgarlı günlerde dikkatlice dinlerseniz, ağaçların Doğa'ya 'Teşekkürler küçük dostum,' dediğini duyabilirdiniz.",
+    category: CATEGORIES.FANTASY,
+    ageGroup: AGE_GROUPS.PRETEEN,
+    imageUrl: WHITE_PLACEHOLDER,
+    isAiGenerated: false,
+    author: 'Masalya',
+    language: 'tr',
+    createdAt: TS
+  },
+  {
+    id: 'fantasy_long_10',
+    title: 'Gölge Olmayan Çocuk',
+    content: "Işıklar Ülkesi'nde güneş hiç batmazdı. Her yer o kadar aydınlıktı ki, insanların gölgeleri çok belirgindi. Gölgeler, insanların karakterini yansıtırdı. Neşeli birinin gölgesi dans eder, üzgün birinin gölgesi büzülürdü. Ancak Aras adında bir çocuk doğduğunda herkes şaşırdı: Aras'ın gölgesi yoktu! Işığın altında duruyor ama arkasında hiçbir iz bırakmıyordu. İnsanlar ondan korktu. 'O eksik, o ruhsuz,' dediler.\n\nAras büyüdükçe yalnızlaştı. Neden gölgesi olmadığını bulmak için 'Karanlık Vadi'ye gitmeye karar verdi. Orası, Işıklar Ülkesi'nin bittiği, gecenin başladığı yerdi. Vadiye girdiğinde ilk defa karanlığı gördü. Korktu ama devam etti. Mağaranın derinliklerinde, simsiyah, dumandan yapılmış bir varlık buldu. Bu bir gölgeydi ama sahibi yoktu. Gölge ağlıyordu.\n\n'Neden ağlıyorsun?' diye sordu Aras. 'Ben bir çocuğa aittim ama doğarken beni Işıklar Ülkesi'nin parlaklığından korkup burada bıraktı,' dedi Gölge. Aras, 'Benim de gölgem yok,' dedi. Gölge kafasını kaldırdı ve Aras'a baktı. Birbirlerine doğru çekildiklerini hissettiler. Aras elini uzattı, Gölge de elini uzattı. Elleri birleştiği an Aras büyük bir bütünlük hissetti. Meğer o gölge Aras'a aitti! \n\nKorku, bizi biz yapan parçalarımızdan ayırabilir. Aras, gölgesini (yani korkularını ve karanlık yanlarını) kabul ettiğinde tam oldu. Ülkesine döndüğünde, onun gölgesi diğerlerinden daha güçlü ve netti. Çünkü o, karanlığı tanımış ve onunla barışmıştı. İnsanlar anladı ki, sadece ışık olmak yetmez, insanı insan yapan ışığı ve gölgesiyle bir bütün olmasıdır.",
+    category: CATEGORIES.FANTASY,
     ageGroup: AGE_GROUPS.PRETEEN,
     imageUrl: WHITE_PLACEHOLDER,
     isAiGenerated: false,
