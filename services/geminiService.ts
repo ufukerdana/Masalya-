@@ -186,7 +186,7 @@ export const generateStoryContent = async (
   ageGroup: string,
   isInteractive: boolean = false,
   length: 'short' | 'long' = 'short'
-): Promise<{ title: string; content: string; imageUrl?: string; choices?: StoryOption[]; wordOfTheDay?: WordOfTheDay; aiAudioUrl?: string } | null> => {
+): Promise<{ title: string; content: string; imageUrl?: string; choices?: StoryOption[]; wordOfTheDay?: WordOfTheDay; aiAudioUrl?: string; coloringPageUrl?: string } | null> => {
   if (!ai) {
     console.error("API Key is missing");
     throw new Error("API Key is missing");
@@ -255,11 +255,12 @@ export const generateStoryContent = async (
       return null;
     }
 
-    // 2. Generate Image and Audio in Parallel
+    // 2. Generate Image, Audio AND Coloring Page in Parallel
     // Individual functions are now wrapped with callWithRetry, so they will handle rate limits independently.
-    const [imageResult, audioResult] = await Promise.all([
+    const [imageResult, audioResult, coloringPageResult] = await Promise.all([
       generateStoryImage(`${prompt} - ${storyData.title}`, ageGroup),
-      !isInteractive ? generateStorySpeech(storyData.content, language) : Promise.resolve(null)
+      !isInteractive ? generateStorySpeech(storyData.content, language) : Promise.resolve(null),
+      generateColoringPage(storyData.title)
     ]);
 
     return {
@@ -268,7 +269,8 @@ export const generateStoryContent = async (
       choices: storyData.choices, // Undefined for non-interactive
       imageUrl: imageResult || undefined,
       wordOfTheDay: storyData.wordOfTheDay,
-      aiAudioUrl: audioResult || undefined
+      aiAudioUrl: audioResult || undefined,
+      coloringPageUrl: coloringPageResult || undefined
     };
 
   } catch (error) {

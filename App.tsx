@@ -959,7 +959,8 @@ const App = () => {
                  isInteractive,
                  choices: result.choices,
                  wordOfTheDay: result.wordOfTheDay,
-                 aiAudioUrl: result.aiAudioUrl
+                 aiAudioUrl: result.aiAudioUrl,
+                 coloringPageUrl: result.coloringPageUrl // Save the generated coloring page URL
              };
              await saveStoryToDB(newStory);
              setStories(prev => [newStory, ...prev]);
